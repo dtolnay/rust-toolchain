@@ -20,7 +20,7 @@ async function run() {
     }
 
     if (opts.override) {
-        await do_exec('rustup', ['override', opts.name]);
+        await do_exec('rustup', ['override', 'set', opts.name]);
     }
 }
 
