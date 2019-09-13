@@ -26,9 +26,13 @@ jobs:
 
 ## Inputs
 
-* `toolchain`: Toolchain name, see [rustup page](https://github.com/rust-lang/rustup.rs#toolchain-specification) for details.\
+* `toolchain` (*required*): Toolchain name, see [rustup page](https://github.com/rust-lang/rustup.rs#toolchain-specification) for details.\
   Examples: `stable`, `nightly`, `nightly-2019-04-20`
+* `target`: Additionally install specific target for this toolchain (ex. `x86_64-apple-darwin`)
 * `default`: Set installed toolchain as default (executes `rustup toolchain default {TOOLCHAIN}`)
 * `override`: Set installed toolchain as an override for current directory
 
-Note: `toolchain` input is required.
+## Notes
+
+As `rustup` is not installed by default for macOS and Windows images at the moment (2019-09-13),
+this Action will try its best to install it before any other operations.

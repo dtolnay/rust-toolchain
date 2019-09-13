@@ -10,7 +10,7 @@
     },
     "scripts": {
         "build": "ncc build src/main.ts --minify",
-        "watch": "ncc build src/main.ts --watch --minify",
+        "watch": "ncc build src/main.ts --watch",
         "test": "jest"
     },
     "repository": {
@@ -30,7 +30,9 @@
     },
     "dependencies": {
         "@actions/core": "^1.0.0",
-        "@actions/exec": "^1.0.0"
+        "@actions/exec": "^1.0.0",
+        "@actions/io": "^1.0.0",
+        "download": "^7.1.0"
     },
     "devDependencies": {
         "@types/jest": "^24.0.13",

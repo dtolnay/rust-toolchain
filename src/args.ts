@@ -28,6 +28,7 @@ function inputBoolean(name: string): boolean {
 
 export interface ToolchainOptions {
     name: string,
+    target?: string,
     default: boolean,
     override: boolean
 }
@@ -35,7 +36,8 @@ export interface ToolchainOptions {
 export function toolchain_args(): ToolchainOptions {
     return {
         name: getInput('toolchain', {required: true}),
+        target: getInput('target') || undefined,
         default: inputBoolean('default'),
         override: inputBoolean('override')
-    }
+    };
 }

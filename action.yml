@@ -10,7 +10,9 @@ inputs:
       Rust toolchain name.
 
       See https://github.com/rust-lang/rustup.rs#toolchain-specification
-    required: true
+  target:
+    description: Target triple to install for this toolchain
+    required: false
   default:
     description: Set installed toolchain as default
     default: false
