@@ -92,19 +92,19 @@ async function run() {
 
     const rustup = await get_rustup(opts.name, opts.target);
 
-//     await do_exec(rustup, ['toolchain', 'install', opts.name]);
-//
-//     if (opts.default) {
-//         await do_exec(rustup, ['default', opts.name]);
-//     }
-//
-//     if (opts.override) {
-//         await do_exec(rustup, ['override', 'set', opts.name]);
-//     }
-//
-//     if (opts.target) {
-//         await do_exec(rustup, ['target', 'add', '--toolchain', opts.name, opts.target]);
-//     }
+    await do_exec(rustup, ['toolchain', 'install', opts.name]);
+
+    if (opts.default) {
+        await do_exec(rustup, ['default', opts.name]);
+    }
+
+    if (opts.override) {
+        await do_exec(rustup, ['override', 'set', opts.name]);
+    }
+
+    if (opts.target) {
+        await do_exec(rustup, ['target', 'add', '--toolchain', opts.name, opts.target]);
+    }
 }
 
 run();
