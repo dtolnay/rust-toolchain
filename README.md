@@ -1,5 +1,7 @@
 # `rustup toolchain` Action
 
+[![Gitter](https://badges.gitter.im/actions-rs/community.svg)](https://gitter.im/actions-rs/community)
+
 This GitHub Action installs [Rust toolchain](https://github.com/rust-lang/rustup.rs#toolchain-specification).
 
 Optionally it can set installed toolchain as a default and as an override for current directory.
