@@ -55,12 +55,12 @@ async function get_rustup(toolchain: string, target?: string): Promise<string> {
         case 'darwin':
         case 'linux':  // Should be installed already, but just in case
             const rustupSh = await downloadRustInit('https://sh.rustup.rs', 'rustup-init.sh');
-            await do_exec(rustupSh, args);
+            await exec.exec(rustupSh, args);
             break;
 
         case 'win32':
             const rustupExe = await downloadRustInit('http://win.rustup.rs', 'rustup-init.exe');
-            await do_exec(rustupExe, args);
+            await exec.exec(rustupExe, args);
             break;
 
         default:
@@ -72,39 +72,31 @@ async function get_rustup(toolchain: string, target?: string): Promise<string> {
     return 'rustup';
 }
 
-async function do_exec(program: string, args: string[]): Promise<number> {
-    try {
-        return await exec.exec(program, args);
-    } catch (error) {
-        core.setFailed(error.message);
-        throw error;
-    }
-}
-
 async function run() {
-    let opts;
-    try {
-        opts = args.toolchain_args();
-    } catch (error) {
-        core.setFailed(error.message);
-        return;
-    }
-
+    const opts = args.toolchain_args();
     const rustup = await get_rustup(opts.name, opts.target);
 
-    await do_exec(rustup, ['toolchain', 'install', opts.name]);
+    await exec.exec(rustup, ['toolchain', 'install', opts.name]);
 
     if (opts.default) {
-        await do_exec(rustup, ['default', opts.name]);
+        await exec.exec(rustup, ['default', opts.name]);
     }
 
     if (opts.override) {
-        await do_exec(rustup, ['override', 'set', opts.name]);
+        await exec.exec(rustup, ['override', 'set', opts.name]);
     }
 
     if (opts.target) {
-        await do_exec(rustup, ['target', 'add', '--toolchain', opts.name, opts.target]);
+        await exec.exec(rustup, ['target', 'add', '--toolchain', opts.name, opts.target]);
     }
 }
 
-run();
+async function main() {
+    try {
+        await run();
+    } catch (error) {
+        core.setFailed(error.message);
+    }
+}
+
+main();

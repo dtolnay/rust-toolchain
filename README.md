@@ -1,5 +1,6 @@
 # `rustup toolchain` Action
 
+![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Gitter](https://badges.gitter.im/actions-rs/community.svg)](https://gitter.im/actions-rs/community)
 
 This GitHub Action installs [Rust toolchain](https://github.com/rust-lang/rustup.rs#toolchain-specification).
@@ -20,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Install nightly
-        uses: actions-rs/toolchain@1
+        uses: actions-rs/toolchain@v1
         with:
             toolchain: nightly
             override: true
@@ -34,7 +35,14 @@ jobs:
 * `default`: Set installed toolchain as default (executes `rustup toolchain default {TOOLCHAIN}`)
 * `override`: Set installed toolchain as an override for current directory
 
+## Components
+
+If you are going to install `clippy`, `rustfmt` or any other [rustup component](https://rust-lang.github.io/rustup-components-history/),
+it might not be available in latest `nightly` build;
+check out the [`actions-rs/components-nightly`](https://github.com/actions-rs/components-nightly) Action,
+which makes this process much easier.
+
 ## Notes
 
-As `rustup` is not installed by default for macOS and Windows images at the moment (2019-09-13),
-this Action will try its best to install it before any other operations.
+As `rustup` is not installed by default for [macOS environments](https://help.github.com/en/articles/virtual-environments-for-github-actions)
+at the moment (2019-09-13), this Action will try its best to install it before any other operations.
