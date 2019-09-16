@@ -1,4 +1,4 @@
-# `rustup toolchain` Action
+# `rust-toolchain` Action
 
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Gitter](https://badges.gitter.im/actions-rs/community.svg)](https://gitter.im/actions-rs/community)
@@ -25,14 +25,24 @@ jobs:
         with:
             toolchain: nightly
             override: true
+
+      # `cargo check` command here will use installed `nightly`
+      # as it set as an "override" for current directory
+
+      - name: Run cargo check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
 ```
+
+See [additional recipes here](https://github.com/actions-rs/meta).
 
 ## Inputs
 
 * `toolchain` (*required*): Toolchain name, see [rustup page](https://github.com/rust-lang/rustup.rs#toolchain-specification) for details.\
   Examples: `stable`, `nightly`, `nightly-2019-04-20`
 * `target`: Additionally install specific target for this toolchain (ex. `x86_64-apple-darwin`)
-* `default`: Set installed toolchain as default (executes `rustup toolchain default {TOOLCHAIN}`)
+* `default`: Set installed toolchain as default (executes `rustup toolchain default {toolchain}`)
 * `override`: Set installed toolchain as an override for current directory
 
 ## Components
