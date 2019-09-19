@@ -29,7 +29,7 @@
         "url": "https://github.com/actions-rs/toolchain/issues"
     },
     "dependencies": {
-        "@actions/core": "^1.0.0",
+        "@actions/core": "^1.1.1",
         "@actions/exec": "^1.0.0",
         "@actions/io": "^1.0.0",
         "download": "^7.1.0"
