@@ -39,11 +39,12 @@ See [additional recipes here](https://github.com/actions-rs/meta).
 
 ## Inputs
 
-* `toolchain` (*required*): Toolchain name, see [rustup page](https://github.com/rust-lang/rustup.rs#toolchain-specification) for details.\
-  Examples: `stable`, `nightly`, `nightly-2019-04-20`
-* `target`: Additionally install specific target for this toolchain (ex. `x86_64-apple-darwin`)
-* `default`: Set installed toolchain as default (executes `rustup toolchain default {toolchain}`)
-* `override`: Set installed toolchain as an override for current directory
+| Name        | Required | Description                                                                                                                            | Type   | Default |
+| ------------| :------: | ---------------------------------------------------------------------------------------------------------------------------------------| ------ | --------|
+| `toolchain` | ✓        | [Toolchain](https://github.com/rust-lang/rustup.rs#toolchain-specification) name to use, ex. `stable`, `nightly`, `nightly-2019-04-20` | string |         |
+| `target`    |          | Additionally install specified target for this toolchain, ex. `x86_64-apple-darwin`                                                    | string |         |
+| `default`   |          | Set installed toolchain as a default toolchain                                                                                         | bool   | false   |
+| `override`  |          | Set installed toolchain as an override for the current directory                                                                       | bool   | false   |
 
 ## Components
 
