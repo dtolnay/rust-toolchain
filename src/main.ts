@@ -32,7 +32,7 @@ function downloadRustInit(url: string, name: string): Promise<string> {
     });
 }
 
-async function get_rustup(toolchain: string, target?: string): Promise<string> {
+async function get_rustup(toolchain: string): Promise<string> {
     try {
         const foundPath = await io.which('rustup', true);
         core.debug(`Found rustup at ${foundPath}`);
@@ -46,10 +46,8 @@ async function get_rustup(toolchain: string, target?: string): Promise<string> {
         '--default-toolchain',
         toolchain,
     ];
-    if (target) {
-        args.push('--default-host');
-        args.push(target);
-    }
+
+    // Note: `target` input can't be used here for `--default-host` argument, see #8
 
     switch (process.platform) {
         case 'darwin':
@@ -74,7 +72,7 @@ async function get_rustup(toolchain: string, target?: string): Promise<string> {
 
 async function run() {
     const opts = args.toolchain_args();
-    const rustup = await get_rustup(opts.name, opts.target);
+    const rustup = await get_rustup(opts.name);
 
     await exec.exec(rustup, ['toolchain', 'install', opts.name]);
 
