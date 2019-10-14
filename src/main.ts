@@ -38,7 +38,7 @@ async function get_rustup(toolchain: string): Promise<string> {
         core.debug(`Found rustup at ${foundPath}`);
         return foundPath;
     } catch (error) {
-        core.warning('Unable to find rustup, installing it now');
+        core.info('Unable to find rustup, installing it now');
     }
 
     let args = [
