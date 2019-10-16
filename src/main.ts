@@ -1,91 +1,52 @@
-const os = require('os');
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-
-const download = require('download');
-
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 
 import * as args from './args';
-
-function downloadRustInit(url: string, name: string): Promise<string> {
-    const absPath = path.join(os.tmpdir(), name);
-
-    return new Promise((resolve, reject) => {
-        let req = download(url);
-        let output = fs.createWriteStream(absPath, {
-            mode: 0o755
-        });
-
-        req.pipe(output);
-        req.on('end', () => {
-            output.close(resolve);
-        });
-        req.on('error', reject);
-        output.on('error', reject);
-    })
-    .then(() => {
-        return absPath;
-    });
-}
-
-async function get_rustup(toolchain: string): Promise<string> {
-    try {
-        const foundPath = await io.which('rustup', true);
-        core.debug(`Found rustup at ${foundPath}`);
-        return foundPath;
-    } catch (error) {
-        core.info('Unable to find rustup, installing it now');
-    }
-
-    let args = [
-        '-y',
-        '--default-toolchain',
-        toolchain,
-    ];
-
-    // Note: `target` input can't be used here for `--default-host` argument, see #8
-
-    switch (process.platform) {
-        case 'darwin':
-        case 'linux':  // Should be installed already, but just in case
-            const rustupSh = await downloadRustInit('https://sh.rustup.rs', 'rustup-init.sh');
-            await exec.exec(rustupSh, args);
-            break;
-
-        case 'win32':
-            const rustupExe = await downloadRustInit('http://win.rustup.rs', 'rustup-init.exe');
-            await exec.exec(rustupExe, args);
-            break;
-
-        default:
-            throw new Error(`Unknown platform ${process.platform}, can't install rustup`);
-    }
-
-    core.addPath(path.join(process.env['HOME'], '.cargo', 'bin'));
-
-    return 'rustup';
-}
+import {RustUp, ToolchainOptions} from '@actions-rs/core';
 
 async function run() {
     const opts = args.toolchain_args();
-    const rustup = await get_rustup(opts.name);
+    const rustup = await RustUp.getOrInstall();
+    await rustup.call(['show']);
 
-    await exec.exec(rustup, ['toolchain', 'install', opts.name]);
-
-    if (opts.default) {
-        await exec.exec(rustup, ['default', opts.name]);
+    let shouldSelfUpdate = false;
+    if (opts.profile && !await rustup.supportProfiles()) {
+        shouldSelfUpdate = true;
+    }
+    if (opts.components && !await rustup.supportComponents()) {
+        shouldSelfUpdate = true;
+    }
+    if (shouldSelfUpdate) {
+        core.startGroup('Updating rustup');
+        try {
+            await rustup.selfUpdate();
+        } finally {
+            core.endGroup();
+        }
     }
 
-    if (opts.override) {
-        await exec.exec(rustup, ['override', 'set', opts.name]);
+    if (opts.profile) {
+        //@ts-ignore
+        await rustup.setProfile(opts.profile);
     }
+
+    let installOptions: ToolchainOptions = {
+        default: opts.default,
+        override: opts.override,
+    };
+    if (opts.components) {
+        installOptions.components = opts.components;
+    }
+    // We already did it just now, there is no reason to do that again,
+    // so it would skip few network calls.
+    if (shouldSelfUpdate) {
+        installOptions.noSelfUpdate = true;
+    }
+    await rustup.installToolchain(opts.name, installOptions);
 
     if (opts.target) {
-        await exec.exec(rustup, ['target', 'add', '--toolchain', opts.name, opts.target]);
+        await rustup.addTarget(opts.target, opts.name);
     }
 }
 

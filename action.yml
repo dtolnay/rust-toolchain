@@ -19,6 +19,12 @@ inputs:
   override:
     description: Set installed toolchain as an override for a directory
     default: false
+  profile:
+    description: Name of the group of components to be installed for a new toolchain
+    required: false
+  components:
+    description: Comma-separated list of components to be additionally installed for a new toolchain
+    required: false
 
 runs:
   using: 'node12'

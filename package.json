@@ -1,6 +1,6 @@
 {
     "name": "rust-toolchain",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "private": false,
     "description": "Install the Rust toolchain",
     "main": "lib/main.js",
@@ -32,7 +32,7 @@
         "@actions/core": "^1.1.1",
         "@actions/exec": "^1.0.0",
         "@actions/io": "^1.0.0",
-        "download": "^7.1.0"
+        "@actions-rs/core": "^0.0.7"
     },
     "devDependencies": {
         "@types/jest": "^24.0.19",
