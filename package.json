@@ -35,7 +35,7 @@
         "download": "^7.1.0"
     },
     "devDependencies": {
-        "@types/jest": "^24.0.13",
+        "@types/jest": "^24.0.19",
         "@types/node": "^12.11.1",
         "@zeit/ncc": "^0.20.5",
         "jest": "^24.9.0",
