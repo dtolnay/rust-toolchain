@@ -81,7 +81,7 @@ and in combination with the [profiles](#profiles) input it allows to install onl
   uses: actions-rs/toolchain@v1
   with:
     profile: minimal
-    toolchain: nightly
+    toolchain: stable
     components: rustfmt, clippy
 ```
 
