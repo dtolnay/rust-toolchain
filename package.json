@@ -35,7 +35,7 @@
         "@actions-rs/core": "^0.0.7"
     },
     "devDependencies": {
-        "@types/jest": "^24.0.22",
+        "@types/jest": "^24.0.23",
         "@types/node": "^12.12.8",
         "@zeit/ncc": "^0.20.5",
         "jest": "^24.9.0",
