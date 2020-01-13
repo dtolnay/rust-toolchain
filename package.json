@@ -11,6 +11,7 @@
     "scripts": {
         "build": "ncc build src/main.ts --minify",
         "watch": "ncc build src/main.ts --watch",
+        "pretest": "git config core.hooksPath .githooks",
         "test": "jest"
     },
     "repository": {
@@ -29,17 +30,19 @@
         "url": "https://github.com/actions-rs/toolchain/issues"
     },
     "dependencies": {
-        "@actions/core": "^1.1.1",
+        "@actions-rs/core": "^0.0.8",
+        "@actions/core": "^1.2.0",
         "@actions/exec": "^1.0.0",
-        "@actions/io": "^1.0.0",
-        "@actions-rs/core": "^0.0.8"
+        "@actions/io": "^1.0.0"
     },
     "devDependencies": {
+        "temp-write": "^4.0.0",
         "@types/jest": "^24.0.23",
         "@types/node": "^12.12.14",
         "@zeit/ncc": "^0.20.5",
         "jest": "^24.9.0",
         "jest-circus": "^24.9.0",
+        "mock-env": "^0.2.0",
         "ts-jest": "^24.2.0",
         "typescript": "^3.7.2"
     }

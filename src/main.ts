@@ -1,12 +1,16 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
+import path from "path";
 
 import * as args from './args';
 import {RustUp, ToolchainOptions} from '@actions-rs/core';
 
 async function run() {
-    const opts = args.toolchain_args();
+    // we use path.join to make sure this works on Windows, Linux and MacOS
+    let toolchainOverrideFile = path.join(process.cwd(), "rust-toolchain");
+
+    const opts = args.toolchain_args(toolchainOverrideFile);
     const rustup = await RustUp.getOrInstall();
     await rustup.call(['show']);
 
