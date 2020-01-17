@@ -40,6 +40,16 @@ describe('actions-rs/toolchain', () => {
             'INPUT_TOOLCHAIN': 'nightly',
         });
 
+        expect(args.name).toBe("nightly")
+    });
+
+    it('uses rust-toolchain file if input does not exist', function () {
+        let rustToolchainFile = tempWriteSync("1.39.0");
+
+        let args = morph(() => {
+            return toolchain_args(rustToolchainFile);
+        }, {});
+
         expect(args.name).toBe("1.39.0")
     });
 
@@ -48,9 +58,7 @@ describe('actions-rs/toolchain', () => {
 
         let args = morph(() => {
             return toolchain_args(rustToolchainFile);
-        }, {
-            'INPUT_TOOLCHAIN': 'nightly',
-        });
+        }, {});
 
         expect(args.name).toBe("1.39.0")
     });

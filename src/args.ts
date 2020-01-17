@@ -28,15 +28,24 @@ export function toolchain_args(overrideFile: string): ToolchainOptions {
 }
 
 function determineToolchain(overrideFile: string): string {
-    if (existsSync(overrideFile)) {
-        debug(`using toolchain override from ${overrideFile}`);
-        const content = readFileSync(overrideFile, {
-            encoding: "utf-8",
-            flag: "r"
-        });
-        return content.trim();
-    } else {
-        debug(`toolchain override file ${overrideFile} does not exist, falling back to input variable`);
-        return input.getInput('toolchain', {required: true})
+
+    const toolchainInput = input.getInput('toolchain', {required: false});
+
+    if (toolchainInput) {
+        debug(`using toolchain from input: ${toolchainInput}`);
+        return toolchainInput
     }
+
+    if (!existsSync(overrideFile)) {
+        throw new Error("toolchain input was not given and repository does not have a rust-toolchain file")
+    }
+
+    const rustToolchainFile = readFileSync(overrideFile, {
+        encoding: "utf-8",
+        flag: "r"
+    }).trim();
+
+    debug(`using toolchain from rust-toolchain file: ${rustToolchainFile}`);
+
+    return rustToolchainFile;
 }

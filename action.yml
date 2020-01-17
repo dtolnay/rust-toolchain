@@ -10,6 +10,9 @@ inputs:
       Rust toolchain name.
 
       See https://github.com/rust-lang/rustup.rs#toolchain-specification
+
+      If this is not given, the action will try and install the version specified in the `rust-toolchain` file.
+    required: false
   target:
     description: Target triple to install for this toolchain
     required: false
