@@ -4,6 +4,7 @@ import * as io from '@actions/io';
 import path from "path";
 
 import * as args from './args';
+import * as versions from './versions';
 import {RustUp, ToolchainOptions} from '@actions-rs/core';
 
 async function run() {
@@ -52,6 +53,8 @@ async function run() {
     if (opts.target) {
         await rustup.addTarget(opts.target, opts.name);
     }
+
+    await versions.gatherInstalledVersions();
 }
 
 async function main() {
