@@ -1,6 +1,6 @@
 {
     "name": "rust-toolchain",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "private": false,
     "description": "Install the Rust toolchain",
     "main": "lib/main.js",

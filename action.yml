@@ -29,6 +29,16 @@ inputs:
     description: Comma-separated list of components to be additionally installed for a new toolchain
     required: false
 
+outputs:
+  rustc:
+    description: Installed Rustc version
+  rustc_hash:
+    description: Installed Rustc version hash, can be used for caching purposes
+  cargo:
+    description: Installed Cargo version
+  rustup:
+    description: Installed rustup version
+
 runs:
   using: 'node12'
   main: 'dist/index.js'

@@ -17,12 +17,30 @@ jobs:
       - run: npm run test
 
   install_stable:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+          - windows-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: ./
+      - id: toolchain
+        uses: ./
         with:
           toolchain: stable
+      - name: Test toolchain outputs
+        env:
+          RUSTC: ${{ steps.toolchain.outputs.rustc }}
+          RUSTC_HASH: ${{ steps.toolchain.outputs.rustc_hash }}
+          CARGO: ${{ steps.toolchain.outputs.cargo }}
+          RUSTUP: ${{ steps.toolchain.outputs.rustup }}
+        run: |
+          echo $RUSTC
+          echo $RUSTC_HASH
+          echo $CARGO
+          echo $RUSTUP
 
   install_nightly:
     runs-on: ubuntu-latest

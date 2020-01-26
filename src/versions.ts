@@ -18,10 +18,15 @@ export async function gatherInstalledVersions(): Promise<void> {
  */
 async function rustc(): Promise<void> {
     const stdout = await getStdout('rustc', ['-V']);
-    const version = parse(stdout);
+    try {
+        const version = parseFull(stdout);
 
-    core.setOutput('rustc', version.long);
-    core.setOutput('rustc-hash', version.hash);
+        core.setOutput('rustc', version.long);
+        core.setOutput('rustc_hash', version.hash);
+    } catch(e) {
+        core.warning(e);
+        core.setOutput('rustc', parseShort(stdout));
+    }
 }
 
 /**
@@ -29,18 +34,23 @@ async function rustc(): Promise<void> {
  */
 async function cargo(): Promise<void> {
     const stdout = await getStdout('cargo', ['-V']);
-    const version = parse(stdout);
+    try {
+        const version = parseFull(stdout);
 
-    core.setOutput('cargo', version.long);
-//     core.setOutput('cargo_short', version.short);
+        core.setOutput('cargo', version.long);
+    } catch(e) {
+        core.setOutput('cargo', parseShort(stdout));
+    }
 }
 
 async function rustup(): Promise<void> {
     const stdout = await getStdout('rustup', ['-V']);
-    const version = parse(stdout);
-
-    core.setOutput('rustup', version.long);
-//     core.setOutput('rustup_short', version.short);
+    try {
+        const version = parseFull(stdout);
+        core.setOutput('rustup', version.long);
+    } catch(e) {
+        core.setOutput('rustup', parseShort(stdout));
+    }
 }
 
 interface Version {
@@ -48,7 +58,17 @@ interface Version {
     hash: string,
 }
 
-function parse(stdout: string): Version {
+/**
+ * Try to parse the version parts and return them.
+ *
+ * It is important to note that some components are not providing
+ * all the expected information, ex. `rustup` on `macOS-latest` VM image
+ * does not has the hash in the version string,
+ * so this function might throw an error.
+ *
+ * As a fallback, `parseShort` function can be used.
+ */
+function parseFull(stdout: string): Version {
     stdout = stdout.trim();
     const matches = stdout.match(/\S+\s((\S+)\s\((\S+)\s(\S+)\))/m);
     if (matches == null) {
@@ -58,6 +78,17 @@ function parse(stdout: string): Version {
     return {
         long: matches[1],
         hash: matches[3],
+    }
+}
+
+function parseShort(stdout: string): string {
+    stdout = stdout.trim();
+    const matches = stdout.match(/\S+\s(.+)/m);
+    if (matches == null) {
+        core.warning(`Unable to determine version from the "${stdout}" string`);
+        return '';
+    } else {
+        return matches[1];
     }
 }
 
