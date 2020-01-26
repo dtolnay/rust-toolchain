@@ -19,7 +19,7 @@ jobs:
     name: Rust project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - name: Install latest nightly
         uses: actions-rs/toolchain@v1
         with:
@@ -41,12 +41,15 @@ See [additional recipes here](https://github.com/actions-rs/meta).
 
 | Name         | Required | Description                                                                                                                                         | Type   | Default |
 | ------------ | :------: | ----------------------------------------------------------------------------------------------------------------------------------------------------| ------ | --------|
-| `toolchain`  | ✓        | [Toolchain](https://github.com/rust-lang/rustup.rs#toolchain-specification) name to use, ex. `stable`, `nightly`, `nightly-2019-04-20`, or `1.32.0` | string |         |
+| `toolchain`  |          | [Toolchain](https://github.com/rust-lang/rustup.rs#toolchain-specification) name to use, ex. `stable`, `nightly`, `nightly-2019-04-20`, or `1.32.0` | string |         |
 | `target`     |          | Additionally install specified target for this toolchain, ex. `x86_64-apple-darwin`                                                                 | string |         |
 | `default`    |          | Set installed toolchain as a default toolchain                                                                                                      | bool   | false   |
 | `override`   |          | Set installed toolchain as an override for the current directory                                                                                    | bool   | false   |
 | `profile`    |          | Execute `rustup set profile {value}` before installing the toolchain, ex. `minimal`                                                                 | string |         |
 | `components` |          | Comma-separated list of the additional components to install, ex. `clippy, rustfmt`                                                                 | string |         |
+
+Note: since `v1.0.4` version, `toolchain` input is not marked as required
+in order to support toolchain files. See the details [below](#the-toolchain-file).
 
 ## Outputs
 
@@ -114,6 +117,15 @@ to install the minimal set of `nightly` toolchain components with the `rustfmt` 
 
 Same to the `profile` input, if the installed `rustup` does not supports "components",
 it will be automatically upgraded by this Action.
+
+## The toolchain file
+
+This Action supports [toolchain files](https://github.com/rust-lang/rustup#the-toolchain-file),
+so it is not necessary to use `toolchain` input anymore.
+
+Input has higher priority, so if you are want to use toolchain file, you need to remove the input from the workflow file.
+
+If neither `toolchain` input or `rust-toolchain` file are provided, Action execution will fail.
 
 ## Notes
 
