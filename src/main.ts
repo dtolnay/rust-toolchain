@@ -1,29 +1,27 @@
-import * as core from '@actions/core';
-import * as exec from '@actions/exec';
-import * as io from '@actions/io';
+import * as core from "@actions/core";
 import path from "path";
 
-import * as args from './args';
-import * as versions from './versions';
-import {RustUp, ToolchainOptions} from '@actions-rs/core';
+import * as args from "./args";
+import * as versions from "./versions";
+import { RustUp, ToolchainOptions } from "@actions-rs/core";
 
-async function run() {
+async function run(): Promise<void> {
     // we use path.join to make sure this works on Windows, Linux and MacOS
-    let toolchainOverrideFile = path.join(process.cwd(), "rust-toolchain");
+    const toolchainOverridePath = path.join(process.cwd(), "rust-toolchain");
 
-    const opts = args.toolchain_args(toolchainOverrideFile);
+    const opts = args.getToolchainArgs(toolchainOverridePath);
     const rustup = await RustUp.getOrInstall();
-    await rustup.call(['show']);
+    await rustup.call(["show"]);
 
     let shouldSelfUpdate = false;
-    if (opts.profile && !await rustup.supportProfiles()) {
+    if (opts.profile && !(await rustup.supportProfiles())) {
         shouldSelfUpdate = true;
     }
-    if (opts.components && !await rustup.supportComponents()) {
+    if (opts.components && !(await rustup.supportComponents())) {
         shouldSelfUpdate = true;
     }
     if (shouldSelfUpdate) {
-        core.startGroup('Updating rustup');
+        core.startGroup("Updating rustup");
         try {
             await rustup.selfUpdate();
         } finally {
@@ -32,11 +30,11 @@ async function run() {
     }
 
     if (opts.profile) {
-        //@ts-ignore
+        // @ts-ignore: TS2345
         await rustup.setProfile(opts.profile);
     }
 
-    let installOptions: ToolchainOptions = {
+    const installOptions: ToolchainOptions = {
         default: opts.default,
         override: opts.override,
     };
@@ -48,6 +46,37 @@ async function run() {
     if (shouldSelfUpdate) {
         installOptions.noSelfUpdate = true;
     }
+
+    // Extra funny case.
+    // Due to `rustup` issue (https://github.com/rust-lang/rustup/issues/2146)
+    // right now installing `nightly` toolchain with extra components might fail
+    // if that specific `nightly` version does not have this component
+    // available.
+    //
+    // See https://github.com/actions-rs/toolchain/issues/53 also.
+    //
+    // By default `rustup` does not downgrade, as it does when you are
+    // updating already installed `nightly`, so we need to pass the
+    // corresponding flag manually.
+    //
+    // We are doing it only if both following conditions apply:
+    //
+    //   1. Requested toolchain is `"nightly"` (exact string match).
+    //   2. At least one component is requested.
+    //
+    // All other cases are not triggering automatic downgrade,
+    // for example, installing specific nightly version
+    // as in `"nightly-2020-03-20"` or `"stable"`.
+    //
+    // Motivation is that users probably want the latest one nightly
+    // with rustfmt and clippy (miri, etc) and they don't really care
+    // about what exact nightly it is.
+    // In case if it's not the nightly at all or it is a some specific
+    // nightly version, they know what they are doing.
+    if (opts.name == "nightly" && opts.components) {
+        installOptions.allowDowngrade = true;
+    }
+
     await rustup.installToolchain(opts.name, installOptions);
 
     if (opts.target) {
@@ -57,7 +86,7 @@ async function run() {
     await versions.gatherInstalledVersions();
 }
 
-async function main() {
+async function main(): Promise<void> {
     try {
         await run();
     } catch (error) {

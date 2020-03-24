@@ -3,5 +3,5 @@ declare module "mock-env" {
         callback: () => T,
         vars: object,
         toRemove?: string[]
-    )
+    ): any;
 }

@@ -1,11 +1,27 @@
 # `rust-toolchain` Action
 
+[![Sponsoring](https://img.shields.io/badge/Support%20it-Say%20%22Thank%20you!%22-blue)](https://actions-rs.github.io/#sponsoring)
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Gitter](https://badges.gitter.im/actions-rs/community.svg)](https://gitter.im/actions-rs/community)
+![Continuous integration](https://github.com/actions-rs/toolchain/workflows/Continuous%20integration/badge.svg)
+![Dependabot enabled](https://api.dependabot.com/badges/status?host=github&repo=actions-rs/toolchain)
 
-This GitHub Action installs [Rust toolchain](https://github.com/rust-lang/rustup.rs#toolchain-specification).
+This GitHub Action installs [Rust toolchain](https://github.com/rust-lang/rustup.rs#toolchain-specification)
+with [rustup](https://github.com/rust-lang/rustup) help.
 
-Optionally it can set installed toolchain as a default and as an override for current directory.
+It supports additional targets, components and profiles and handles all
+these small papercuts from you.
+
+**Table of Contents**
+
+* [Example workflow](#example-workflow)
+* [Inputs](#inputs)
+* [Outputs](#outputs)
+* [Profiles](#profiles)
+* [Components](#components)
+* [The toolchain file](#the-toolchain-file)
+* [License](#license)
+* [Contribute and support](#contribute-and-support)
 
 ## Example workflow
 
@@ -25,9 +41,10 @@ jobs:
         with:
             toolchain: nightly
             override: true
+            components: rustfmt, clippy
 
       # `cargo check` command here will use installed `nightly`
-      # as it set as an "override" for current directory
+      # as it is set as an "override" for current directory
 
       - name: Run cargo check
         uses: actions-rs/cargo@v1
@@ -115,7 +132,15 @@ to install the minimal set of `nightly` toolchain components with the `rustfmt` 
     components: rustfmt, clippy
 ```
 
-Same to the `profile` input, if the installed `rustup` does not supports "components",
+In case if `nightly` toolchain is requested and one of the components is missing in
+latest `nightly` release, this Action will attempt the downgrade till it find
+the most recent `nightly` with all components needed.\
+Note that this behavior will work only if the following two conditions apply:
+
+ 1. `toolchain` input is `nightly` exactly.
+ 2. At least one component is provided in `components` input.
+
+Same to the `profile` input, if installed `rustup` does not supports "components",
 it will be automatically upgraded by this Action.
 
 ## The toolchain file
@@ -123,11 +148,22 @@ it will be automatically upgraded by this Action.
 This Action supports [toolchain files](https://github.com/rust-lang/rustup#the-toolchain-file),
 so it is not necessary to use `toolchain` input anymore.
 
-Input has higher priority, so if you are want to use toolchain file, you need to remove the input from the workflow file.
+Input has higher priority, so if you are want to use toolchain file,
+you need to remove the input from the workflow file.
 
-If neither `toolchain` input or `rust-toolchain` file are provided, Action execution will fail.
+If neither `toolchain` input or `rust-toolchain` file are provided,
+Action execution will fail.
 
-## Notes
+## License
 
-As `rustup` is not installed by default for [macOS environments](https://help.github.com/en/articles/virtual-environments-for-github-actions)
-at the moment (2019-09-13), this Action will try its best to install it before any other operations.
+This Action is distributed under the terms of the MIT license, see [LICENSE](https://github.com/actions-rs/toolchain/blob/master/LICENSE) for details.
+
+## Contribute and support
+
+Any contributions are welcomed!
+
+If you want to report a bug or have a feature request,
+check the [Contributing guide](https://github.com/actions-rs/.github/blob/master/CONTRIBUTING.md).
+
+You can also support author by funding the ongoing project work,
+see [Sponsoring](https://actions-rs.github.io/#sponsoring).
