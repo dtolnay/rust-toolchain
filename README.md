@@ -10,7 +10,7 @@ This GitHub Action installs [Rust toolchain](https://github.com/rust-lang/rustup
 with [rustup](https://github.com/rust-lang/rustup) help.
 
 It supports additional targets, components and profiles and handles all
-these small papercuts from you.
+these small papercuts for you.
 
 **Table of Contents**
 
