@@ -1,0 +1,72 @@
+name: Continuous integration
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create npm configuration
+        run: echo "//npm.pkg.github.com/:_authToken=${token}" >> ~/.npmrc
+        env:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v1
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run test
+
+  install_stable:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - id: toolchain
+        uses: ./
+        with:
+          toolchain: stable
+      - name: Test toolchain outputs
+        env:
+          RUSTC: ${{ steps.toolchain.outputs.rustc }}
+          RUSTC_HASH: ${{ steps.toolchain.outputs.rustc_hash }}
+          CARGO: ${{ steps.toolchain.outputs.cargo }}
+          RUSTUP: ${{ steps.toolchain.outputs.rustup }}
+        run: |
+          echo $RUSTC
+          echo $RUSTC_HASH
+          echo $CARGO
+          echo $RUSTUP
+
+  install_nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ./
+        with:
+          profile: minimal
+          toolchain: nightly
+          components: rustfmt, clippy
+
+  install_stable_in_docker:
+    runs-on: ubuntu-latest
+    container: ubuntu:latest  # Docker image, not the GitHub Actions VM
+    steps:
+      # `rustup` will need `curl` or `wget` later
+      - run: apt-get update && apt-get install -y curl
+      - uses: actions/checkout@v1
+      - uses: ./
+        with:
+          toolchain: stable
+
+  install_stable_through_rust_toolchain_file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: echo "stable" > ./rust-toolchain
+      - uses: ./

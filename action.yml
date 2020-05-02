@@ -1,0 +1,44 @@
+name: 'rust-toolchain'
+description: 'Install the Rust toolchain'
+author: 'actions-rs team'
+branding:
+  icon: play-circle
+  color: black
+inputs:
+  toolchain:
+    description: |
+      Rust toolchain name.
+
+      See https://github.com/rust-lang/rustup.rs#toolchain-specification
+
+      If this is not given, the action will try and install the version specified in the `rust-toolchain` file.
+    required: false
+  target:
+    description: Target triple to install for this toolchain
+    required: false
+  default:
+    description: Set installed toolchain as default
+    default: false
+  override:
+    description: Set installed toolchain as an override for a directory
+    default: false
+  profile:
+    description: Name of the group of components to be installed for a new toolchain
+    required: false
+  components:
+    description: Comma-separated list of components to be additionally installed for a new toolchain
+    required: false
+
+outputs:
+  rustc:
+    description: Installed Rustc version
+  rustc_hash:
+    description: Installed Rustc version hash, can be used for caching purposes
+  cargo:
+    description: Installed Cargo version
+  rustup:
+    description: Installed rustup version
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

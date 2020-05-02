@@ -1,0 +1,58 @@
+{
+    "name": "rust-toolchain",
+    "version": "1.0.6",
+    "private": false,
+    "description": "Install the Rust toolchain",
+    "main": "lib/main.js",
+    "directories": {
+        "lib": "lib",
+        "test": "__tests__"
+    },
+    "scripts": {
+        "build": "rm -rf ./dist/* && ncc build src/main.ts --minify",
+        "format": "prettier --write 'src/**/*.ts' '__tests__/**/*.ts'",
+        "lint": "tsc --noEmit && eslint 'src/**/*.ts' '__tests__/**/*.ts'",
+        "watch": "rm -rf ./dist/* && ncc build src/main.ts --watch",
+        "test": "jest -c jest.config.json",
+        "pretest": "git config core.hooksPath .githooks"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/actions-rs/toolchain.git"
+    },
+    "keywords": [
+        "actions",
+        "rust",
+        "rustup",
+        "toolchain"
+    ],
+    "author": "actions-rs",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/actions-rs/toolchain/issues"
+    },
+    "dependencies": {
+        "@actions-rs/core": "^0.0.9",
+        "@actions/core": "^1.2.3",
+        "@actions/exec": "^1.0.3",
+        "@actions/io": "^1.0.2"
+    },
+    "devDependencies": {
+        "@types/jest": "^25.1.4",
+        "@types/node": "^13.9.3",
+        "@typescript-eslint/eslint-plugin": "^2.25.0",
+        "@typescript-eslint/parser": "^2.25.0",
+        "@zeit/ncc": "^0.22.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.10.1",
+        "eslint-plugin-prettier": "^3.1.2",
+        "jest": "^25.1.0",
+        "jest-circus": "^25.1.0",
+        "mock-env": "^0.2.0",
+        "npm-check-updates": "^4.0.5",
+        "prettier": "^2.0.2",
+        "temp-write": "^4.0.0",
+        "ts-jest": "^25.2.1",
+        "typescript": "^3.8.3"
+    }
+}

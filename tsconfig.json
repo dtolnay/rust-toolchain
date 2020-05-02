@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "checkJs": false,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "newLine": "LF",
+        "noEmitOnError": true,
+        "noErrorTruncation": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "outDir": "dist",
+        "pretty": true,
+        "removeComments": true,
+        "resolveJsonModule": true,
+        "strict": true,
+        "suppressImplicitAnyIndexErrors": false,
+        "target": "es2018",
+        "declaration": false,
+        "sourceMap": false,
+        "typeRoots": ["./types", "./node_modules/@types"]
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
+}
