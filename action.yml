@@ -1,6 +1,6 @@
 name: 'rust-toolchain'
 description: 'Install the Rust toolchain'
-author: 'actions-rs team'
+author: David Tolnay <@dtolnay>
 branding:
   icon: play-circle
   color: black

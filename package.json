@@ -18,7 +18,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/actions-rs/toolchain.git"
+        "url": "git+https://github.com/dtolnay/rust-toolchain.git"
     },
     "keywords": [
         "actions",
@@ -26,10 +26,10 @@
         "rustup",
         "toolchain"
     ],
-    "author": "actions-rs",
+    "author": "David Tolnay <dtolnay@gmail.com>",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/actions-rs/toolchain/issues"
+        "url": "https://github.com/dtolnay/rust-toolchain/issues"
     },
     "dependencies": {
         "@actions-rs/core": "^0.0.9",

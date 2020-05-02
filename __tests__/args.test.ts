@@ -2,7 +2,7 @@ import { getToolchainArgs } from "../src/args";
 import { morph } from "mock-env";
 import { sync as tempWriteSync } from "temp-write";
 
-describe("actions-rs/toolchain", () => {
+describe("dtolnay/rust-toolchain", () => {
     it("Parses action input into toolchain options", () => {
         const args = morph(
             () => {
