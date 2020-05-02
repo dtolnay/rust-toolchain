@@ -18,13 +18,13 @@ inputs:
     required: false
   default:
     description: Set installed toolchain as default
-    default: false
+    default: true
   override:
     description: Set installed toolchain as an override for a directory
-    default: false
+    default: true
   profile:
     description: Name of the group of components to be installed for a new toolchain
-    required: false
+    default: minimal
   components:
     description: Comma-separated list of components to be additionally installed for a new toolchain
     required: false
