@@ -29,6 +29,7 @@ inputs:
   components:
     description: Comma-separated list of components to be additionally installed for a new toolchain
     required: false
+    default: clippy
 
 outputs:
   rustc:
