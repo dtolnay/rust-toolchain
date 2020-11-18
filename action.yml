@@ -9,7 +9,7 @@ inputs:
     description: |
       Rust toolchain name.
 
-      See https://github.com/rust-lang/rustup.rs#toolchain-specification
+      See https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
 
       If this is not given, the action will try and install the version specified in the `rust-toolchain` file.
     required: false
