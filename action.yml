@@ -13,7 +13,7 @@ inputs:
 
       If this is not given, the action will try and install the version specified in the `rust-toolchain` file.
     required: false
-    #default: ${{ rev }}
+    default: 1.20.0
   target:
     description: Target triple to install for this toolchain
     required: false
