@@ -26,12 +26,13 @@ runs:
         : construct rustup command line
         echo "::set-output name=targets::$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)"
         echo "::set-output name=components::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
+        echo "::set-output name=downgrade::${{inputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}"
       env:
         targets: ${{inputs.target}}
         components: ${{inputs.components}}
       shell: bash
     - name: rustup toolchain install ${{inputs.toolchain}}
-      run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal --allow-downgrade --no-self-update
+      run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal${{steps.flags.outputs.downgrade}} --no-self-update
       shell: bash
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
