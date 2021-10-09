@@ -9,6 +9,9 @@ inputs:
   target:
     description: Target triple to install for this toolchain
     required: false
+  components:
+    description: Comma-separated list of components to be additionally installed
+    required: false
 
 outputs:
   version:
@@ -19,7 +22,7 @@ runs:
   using: composite
   steps:
     - name: rustup toolchain install ${{inputs.toolchain}}
-      run: rustup toolchain install ${{inputs.toolchain}}${{inputs.target && format(' --target {0}', inputs.target)}} --profile minimal --no-self-update
+      run: rustup toolchain install ${{inputs.toolchain}}${{inputs.target && format(' --target {0}', inputs.target)}}${{inputs.components && format(' --component {0}', inputs.components)}} --profile minimal --no-self-update
       shell: bash
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
