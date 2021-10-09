@@ -22,8 +22,8 @@ runs:
   using: composite
   steps:
     - id: flags
-      name: construct rustup command line
       run: |
+        : construct rustup command line
         echo "::set-output name=target::${{inputs.target && ' --target '}}${{inputs.target}}"
         echo "::set-output name=components::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
       env:
