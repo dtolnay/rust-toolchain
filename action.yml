@@ -15,3 +15,5 @@ runs:
       shell: bash
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
+    - run: rustc --version
+      shell: bash
