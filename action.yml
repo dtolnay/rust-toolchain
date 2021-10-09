@@ -25,7 +25,9 @@ runs:
       run: echo "::set-output name=flag::${{inputs.target && ' --target '}}${{inputs.target}}"
       shell: bash
     - id: components
-      run: echo "::set-output name=flag::${{inputs.components && ' --component '}}${{inputs.components}}"
+      run: echo "::set-output name=flag::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
+      env:
+        components: ${{inputs.components}}
       shell: bash
     - name: rustup toolchain install ${{inputs.toolchain}}
       run: rustup toolchain install ${{inputs.toolchain}}${{steps.target.outputs.flag}}${{steps.components.outputs.flag}} --profile minimal --no-self-update
