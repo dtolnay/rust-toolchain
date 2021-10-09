@@ -31,7 +31,7 @@ runs:
         components: ${{inputs.components}}
       shell: bash
     - name: rustup toolchain install ${{inputs.toolchain}}
-      run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal --no-self-update
+      run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal --allow-downgrade --no-self-update
       shell: bash
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
