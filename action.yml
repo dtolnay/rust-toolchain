@@ -24,13 +24,14 @@ runs:
     - id: flags
       run: |
         : construct rustup command line
-        echo "::set-output name=target::${{inputs.target && ' --target '}}${{inputs.target}}"
+        echo "::set-output name=targets::$(for c in ${targets//,/ }; do echo -n ' --target' $c; done)"
         echo "::set-output name=components::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
       env:
+        targets: ${{inputs.target}}
         components: ${{inputs.components}}
       shell: bash
     - name: rustup toolchain install ${{inputs.toolchain}}
-      run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.target}}${{steps.flags.outputs.components}} --profile minimal --no-self-update
+      run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal --no-self-update
       shell: bash
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
