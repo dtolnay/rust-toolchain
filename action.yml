@@ -24,7 +24,7 @@ runs:
     - id: flags
       run: |
         : construct rustup command line
-        echo "::set-output name=targets::$(for c in ${targets//,/ }; do echo -n ' --target' $c; done)"
+        echo "::set-output name=targets::$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)"
         echo "::set-output name=components::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
       env:
         targets: ${{inputs.target}}
