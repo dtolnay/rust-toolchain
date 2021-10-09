@@ -21,16 +21,15 @@ outputs:
 runs:
   using: composite
   steps:
-    - id: target
-      run: echo "::set-output name=flag::${{inputs.target && ' --target '}}${{inputs.target}}"
-      shell: bash
-    - id: components
-      run: echo "::set-output name=flag::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
+    - id: flags
+      run: |
+        echo "::set-output name=target::${{inputs.target && ' --target '}}${{inputs.target}}"
+        echo "::set-output name=components::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
       env:
         components: ${{inputs.components}}
       shell: bash
     - name: rustup toolchain install ${{inputs.toolchain}}
-      run: rustup toolchain install ${{inputs.toolchain}}${{steps.target.outputs.flag}}${{steps.components.outputs.flag}} --profile minimal --no-self-update
+      run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.target}}${{steps.flags.outputs.components}} --profile minimal --no-self-update
       shell: bash
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
