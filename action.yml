@@ -1,0 +1,17 @@
+name: rustup
+author: David Tolnay
+description: Install the Rust toolchain
+
+inputs:
+  toolchain:
+    description: Rust toolchain specification -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: rustup toolchain install ${{inputs.toolchain}}
+      run: rustup toolchain install ${{inputs.toolchain}} --profile minimal --no-self-update
+      shell: bash
+    - run: rustup default ${{inputs.toolchain}}
+      shell: bash
