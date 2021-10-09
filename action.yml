@@ -21,8 +21,14 @@ outputs:
 runs:
   using: composite
   steps:
+    - id: target
+      run: echo "::set-output name=flag::${{inputs.target && ' --target '}}${{inputs.target}}"
+      shell: bash
+    - id: components
+      run: echo "::set-output name=flag::${{inputs.components && ' --component '}}${{inputs.components}}"
+      shell: bash
     - name: rustup toolchain install ${{inputs.toolchain}}
-      run: rustup toolchain install ${{inputs.toolchain}}${{inputs.target && format(' --target {0}', inputs.target)}}${{inputs.components && format(' --component {0}', inputs.components)}} --profile minimal --no-self-update
+      run: rustup toolchain install ${{inputs.toolchain}}${{steps.target.outputs.flag}}${{steps.components.outputs.flag}} --profile minimal --no-self-update
       shell: bash
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
