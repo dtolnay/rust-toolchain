@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule: [cron: "40 1 * * *"]
+
+jobs:
+  install:
+    name: Rust ${{matrix.rust}}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: [nightly, beta, stable]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        name: Run dtolnay/rust-toolchain@${{matrix.rust}}
+        id: toolchain
+        with:
+          toolchain: ${{matrix.rust}}
+      - name: Check ${{'${{steps.toolchain.outputs.version}}'}}
+        run: echo '${{steps.toolchain.outputs.version}}'
+      - run: rustc --version
