@@ -30,9 +30,9 @@ All inputs are optional.
 
 | Name         | Description                                                                                                                        |
 | ------------ | -----------------------------------------------------------------------------------------------------------------------------------|
-| `toolchain`  | Rustup toolchain specifier, ex. `stable`, `nightly`, `1.42.0`. **Important: the default is to match the @rev as described above.** |
-| `target`     | Additional target support to install, ex. `wasm32-unknown-unknown`                                                                 |
-| `components` | Comma-separated string of additional components to install, ex. `clippy, rustfmt`                                                  |
+| `toolchain`  | Rustup toolchain specifier e.g. `stable`, `nightly`, `1.42.0`. **Important: the default is to match the @rev as described above.** |
+| `target`     | Additional target support to install e.g. `wasm32-unknown-unknown`                                                                 |
+| `components` | Comma-separated string of additional components to install e.g. `clippy, rustfmt`                                                  |
 
 ## License
 
