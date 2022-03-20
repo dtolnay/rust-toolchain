@@ -10,7 +10,7 @@ fi
 base=$(git rev-parse HEAD)
 git checkout --quiet "$base"
 
-for rev in 1.{0..60}.0 stable beta nightly; do
+for rev in 1.{0..70}.0 stable beta nightly; do
     echo "Updating $rev branch"
     git branch --quiet --delete --force $rev &>/dev/null || true
     sed -i "s/required: true/required: false\n    default: $rev/" action.yml
