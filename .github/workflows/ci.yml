@@ -14,7 +14,7 @@ jobs:
       matrix:
         rust: [nightly, beta, stable]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         name: Run dtolnay/rust-toolchain@${{matrix.rust}}
         id: toolchain
