@@ -8,14 +8,15 @@ if ! git diff-index --quiet HEAD; then
 fi
 
 base=$(git rev-parse HEAD)
-git checkout --quiet "$base"
 
 for rev in 1.{0..70}.0 stable beta nightly; do
     echo "Updating $rev branch"
+    git checkout --quiet "$base"
     git branch --quiet --delete --force $rev &>/dev/null || true
     sed -i "s/required: true/required: false\n    default: $rev/" action.yml
     git add action.yml
     git commit --quiet --message "toolchain: $rev"
     git checkout --quiet -b $rev
-    git checkout --quiet "$base"
 done
+
+git checkout --quiet "$base"
