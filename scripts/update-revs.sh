@@ -8,6 +8,7 @@ if ! git diff-index --quiet HEAD; then
 fi
 
 base=$(git rev-parse HEAD)
+push=()
 
 for rev in 1.{0..70}.0 stable beta nightly; do
     echo "Updating $rev branch"
@@ -17,6 +18,7 @@ for rev in 1.{0..70}.0 stable beta nightly; do
     git add action.yml
     git commit --quiet --message "toolchain: $rev"
     git checkout --quiet -b $rev
+    push+=("$rev:refs/heads/$rev")
 done
 
 for tool in clippy miri; do
@@ -27,6 +29,9 @@ for tool in clippy miri; do
     git add action.yml
     git commit --quiet --message "components: $tool"
     git checkout --quiet -b $tool
+    push+=("$tool:refs/heads/$tool")
 done
 
 git checkout --quiet "$base"
+
+echo "git push origin --force-with-lease ${push[@]}"
