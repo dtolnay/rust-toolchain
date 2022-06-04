@@ -31,8 +31,8 @@ runs:
         targets: ${{inputs.target}}
         components: ${{inputs.components}}
       shell: bash
-    - name: "Install rustup if needed"
-      run: |
+    - run: |
+        : install rustup if needed
         if ! command -v rustup &> /dev/null ; then
           curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused -fsSL "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
           echo "${CARGO_HOME:-~/.cargo}/bin" >> $GITHUB_PATH
