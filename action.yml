@@ -31,6 +31,14 @@ runs:
         targets: ${{inputs.target}}
         components: ${{inputs.components}}
       shell: bash
+    - name: "Install rustup if needed"
+      run: |
+        if ! command -v rustup &> /dev/null ; then
+          curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused -fsSL "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
+          echo "${CARGO_HOME:-~/.cargo}/bin" >> $GITHUB_PATH
+        fi
+      if: runner.os != 'Windows'
+      shell: bash
     - name: rustup toolchain install ${{inputs.toolchain}}
       run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal${{steps.flags.outputs.downgrade}} --no-self-update
       shell: bash
