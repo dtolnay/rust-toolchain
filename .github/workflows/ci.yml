@@ -12,7 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rust: [nightly, beta, stable]
+        # attempt miri only on nightly; everything else on all 3 toolchains
+        rust: ${{fromJSON(github.ref_name == 'miri' && '["nightly"]' || '["nightly", "beta", "stable"]')}}
     steps:
       - uses: actions/checkout@v3
       - uses: ./
