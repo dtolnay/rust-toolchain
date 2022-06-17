@@ -7,10 +7,19 @@ if ! git diff-index --quiet HEAD; then
     exit 1
 fi
 
+patch_releases=(
+    1.12.1 1.15.1 1.22.1 1.24.1 1.26.1 1.26.2 1.27.1 1.27.2 1.29.1 1.29.2 1.30.1
+    1.31.1 1.34.1 1.34.2 1.41.1 1.43.1 1.44.1 1.45.1 1.45.2 1.52.1 1.56.1 1.58.1
+)
+
+releases() {
+    printf "%s\n" 1.{0..70}.0 ${patch_release[@]} | sort -V
+}
+
 base=$(git rev-parse HEAD)
 push=()
 
-for rev in 1.{0..70}.0 stable beta nightly; do
+for rev in `releases` stable beta nightly; do
     echo "Updating $rev branch"
     git checkout --quiet "$base"
     git branch --quiet --delete --force $rev &>/dev/null || true
