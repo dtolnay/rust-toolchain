@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [master]
   pull_request:
   schedule: [cron: "40 1 * * *"]
 
@@ -12,8 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # attempt miri only on nightly; everything else on all 3 toolchains
-        rust: ${{fromJSON(github.ref_name == 'miri' && '["nightly"]' || '["nightly", "beta", "stable"]')}}
+        rust: [nightly, beta, stable]
     steps:
       - uses: actions/checkout@v3
       - uses: ./
