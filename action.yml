@@ -1,4 +1,4 @@
-name: rustup
+name: rustup toolchain install
 author: David Tolnay
 description: Install the Rust toolchain
 
