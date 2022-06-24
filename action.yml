@@ -1,6 +1,9 @@
 name: rustup toolchain install
 author: David Tolnay
 description: Install the Rust toolchain
+branding:
+  icon: activity
+  color: purple
 
 inputs:
   toolchain:
