@@ -34,7 +34,9 @@ for tool in clippy miri; do
     echo "Updating $tool branch"
     git checkout --quiet --detach nightly
     git branch --quiet --delete --force $tool &>/dev/null || true
-    sed -i "/required: false/{N;s/\n$/\n    default: $tool\n/}" action.yml
+    default=$tool
+    if [ $tool == miri ]; then default+=,\ rust-src; fi
+    sed -i "/required: false/{N;s/\n$/\n    default: $default\n/}" action.yml
     git add action.yml
     git commit --quiet --message "components: $tool"
     git checkout --quiet -b $tool
