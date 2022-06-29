@@ -40,7 +40,7 @@ for tool in clippy miri; do
     else
         default=$tool
     fi
-    sed -i "/required: false/{N;s/\n$/\n    default: $tool\n/}" action.yml
+    sed -i "/required: false/{N;s/\n$/\n    default: $default\n/}" action.yml
     git add action.yml
     git commit --quiet --message "components: $tool"
     git checkout --quiet -b $tool
