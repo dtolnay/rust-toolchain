@@ -38,6 +38,7 @@ All inputs are optional.
   <td>
     Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.42.0</code>, <code>nightly-2022-01-01</code>.
     <b>Important: the default is to match the @rev as described above.</b>
+    When passing an explicit <code>toolchain</code> as an input instead of @rev, you'll want to use "dtolnay/rust-toolchain@master" as the revision of the action.
   </td>
 </tr>
 <tr>
