@@ -36,7 +36,7 @@ All inputs are optional.
 <tr>
   <td><code>toolchain</code></td>
   <td>
-    Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.42.0</code>.
+    Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.42.0</code>, <code>nightly-2022-01-01</code>.
     <b>Important: the default is to match the @rev as described above.</b>
   </td>
 </tr>
