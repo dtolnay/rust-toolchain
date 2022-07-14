@@ -18,8 +18,11 @@ inputs:
 
 outputs:
   version:
-    description: Version as reported by `rustc --version`
+    description: Version as reported by `rustc --version`, e.g. "rustc 1.62.0 (a8314ef7d 2022-06-27)"
     value: ${{steps.rustc-version.outputs.version}}
+  rustc_hash:
+    description: The rustc hash, e.g. "a8314ef7d"
+    value: ${{steps.rustc-hash.outputs.hash}}
 
 runs:
   using: composite
@@ -49,6 +52,9 @@ runs:
       shell: bash
     - id: rustc-version
       run: echo "::set-output name=version::$(rustc --version)"
+      shell: bash
+    - id: rustc-hash
+      run: echo "::set-output name=hash::$(rustc --version | cut -d'(' -f2 -| cut -d' ' -f1)"
       shell: bash
     - run: rustc --version
       shell: bash
