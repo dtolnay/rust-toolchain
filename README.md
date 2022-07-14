@@ -28,11 +28,24 @@ the nightly Rust toolchain, while "dtolnay/rust-toolchain@1.42.0" pulls in
 
 All inputs are optional.
 
-| Name         | Description                                                                                                                        |
-| ------------ | -----------------------------------------------------------------------------------------------------------------------------------|
-| `toolchain`  | Rustup toolchain specifier e.g. `stable`, `nightly`, `1.42.0`. **Important: the default is to match the @rev as described above.** |
-| `target`     | Additional target support to install e.g. `wasm32-unknown-unknown`                                                                 |
-| `components` | Comma-separated string of additional components to install e.g. `clippy, rustfmt`                                                  |
+<table>
+<tr>
+  <th>Name</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td><code>toolchain</code></td>
+  <td>Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.42.0</code>. <b>Important: the default is to match the @rev as described above.</b></td>
+</tr>
+<tr>
+  <td><code>target</code></td>
+  <td>Additional target support to install e.g. <code>wasm32-unknown-unknown</code></td>
+</tr>
+<tr>
+  <td><code>components</code></td>
+  <td>Comma-separated string of additional components to install e.g. <code>clippy, rustfmt</code></td>
+</tr>
+</table>
 
 ## License
 
