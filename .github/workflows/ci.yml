@@ -15,7 +15,7 @@ jobs:
       matrix:
         name: [Linux]
         os: [ubuntu]
-        rust: [nightly, beta, stable]
+        rust: [nightly, beta, stable, 1.0.0]
         include:
           - name: macOS
             os: macos
