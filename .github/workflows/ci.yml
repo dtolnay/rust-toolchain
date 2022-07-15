@@ -32,4 +32,6 @@ jobs:
           toolchain: ${{matrix.rust}}
       - name: Check ${{'${{steps.toolchain.outputs.version}}'}}
         run: echo '${{steps.toolchain.outputs.version}}'
+      - name: Check ${{'${{steps.toolchain.outputs.cachekey}}'}}
+        run: echo '${{steps.toolchain.outputs.cachekey}}'
       - run: rustc --version
