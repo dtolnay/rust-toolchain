@@ -20,9 +20,18 @@ outputs:
   version:
     description: Version as reported by `rustc --version`, e.g. "rustc 1.62.0 (a8314ef7d 2022-06-27)"
     value: ${{steps.rustc-version.outputs.version}}
-  rustc_hash:
-    description: The rustc hash, e.g. "a8314ef7d"
-    value: ${{steps.rustc-hash.outputs.hash}}
+  commit-hash:
+    description: The rustc source revision, e.g. "a8314ef7d0ec7b75c336af2c9857bfaf43002bfc"
+    value: ${{steps.rustc-version.outputs.commit-hash}}
+  abbrev-hash:
+    description: The abbreviated rustc source revision, e.g. "a8314ef7d"
+    value: ${{steps.rustc-version.outputs.abbrev-hash}}
+  commit-date:
+    description: The rustc source date, e.g. "2022-06-27"
+    value: ${{steps.rustc-version.outputs.commit-date}}
+  release:
+    description: The rustc version, e.g. "1.62.0"
+    value: ${{steps.rustc-version.outputs.release}}
 
 runs:
   using: composite
@@ -51,10 +60,12 @@ runs:
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
     - id: rustc-version
-      run: echo "::set-output name=version::$(rustc --version)"
+      run: |
+        echo "::set-output name=version::$(rustc --version)"
+        echo "::set-output name=commit-hash::$(rustc --verbose --version | sed -ne 's/commit-hash: //p')"
+        echo "::set-output name=abbrev-hash::$(rustc --verbose --version | sed -ne 's/commit-hash: //p' | head -c9)"
+        echo "::set-output name=commit-date::$(rustc --verbose --version | sed -ne 's/commit-date: //p')"
+        echo "::set-output name=release::$(rustc --verbose --version | sed -ne 's/release: //p')"
       shell: bash
-    - id: rustc-hash
-      run: echo "::set-output name=hash::$(rustc --version | cut -d'(' -f2 -| cut -d' ' -f1)"
-      shell: bash
-    - run: rustc --version
+    - run: rustc --verbose --version
       shell: bash
