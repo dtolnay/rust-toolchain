@@ -18,7 +18,7 @@ inputs:
 
 outputs:
   version:
-    description: Version as reported by `rustc --version`
+    description: Version as reported by `rustc --version`, e.g. "rustc 1.62.0 (a8314ef7d 2022-06-27)"
     value: ${{steps.rustc-version.outputs.version}}
 
 runs:
