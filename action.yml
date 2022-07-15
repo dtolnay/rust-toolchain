@@ -49,7 +49,7 @@ runs:
       shell: bash
     - id: rustc-version
       run: |
-        : set outputs
+        : create cachekey
         DATE=$(rustc --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
         HASH=$(rustc --version --verbose | sed -ne 's/^commit-hash: //p')
         echo "::set-output name=cachekey::$(echo $DATE$HASH | head -c12)"
