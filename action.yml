@@ -17,8 +17,11 @@ inputs:
     required: false
 
 outputs:
+  cachekey:
+    description: A short hash of the rustc version, appropriate for use as a cache key. "20220627a831"
+    value: ${{steps.rustc-version.outputs.cachekey}}
   version:
-    description: Version as reported by `rustc --version`, e.g. "rustc 1.62.0 (a8314ef7d 2022-06-27)"
+    description: Version as reported by `rustc --version`. "rustc 1.62.0 (a8314ef7d 2022-06-27)"
     value: ${{steps.rustc-version.outputs.version}}
 
 runs:
@@ -48,7 +51,12 @@ runs:
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
     - id: rustc-version
-      run: echo "::set-output name=version::$(rustc --version)"
+      run: |
+        : set outputs
+        DATE=$(rustc --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
+        HASH=$(rustc --version --verbose | sed -ne 's/^commit-hash: //p')
+        echo "::set-output name=cachekey::$(echo $DATE$HASH | head -c12)"
+        echo "::set-output name=version::$(rustc --version)"
       shell: bash
     - run: rustc --version --verbose
       shell: bash
