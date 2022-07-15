@@ -50,5 +50,5 @@ runs:
     - id: rustc-version
       run: echo "::set-output name=version::$(rustc --version)"
       shell: bash
-    - run: rustc --version
+    - run: rustc --version --verbose
       shell: bash
