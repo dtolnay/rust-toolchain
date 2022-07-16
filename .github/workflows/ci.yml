@@ -15,14 +15,20 @@ jobs:
       matrix:
         name: [Linux]
         os: [ubuntu]
-        rust: [nightly, beta, stable, 1.0.0]
+        rust: [nightly, beta, stable, 1.62.0, 1.0.0]
         include:
           - name: macOS
             os: macos
             rust: nightly
+          - name: macOS
+            os: macos
+            rust: 1.62.0
           - name: Windows
             os: windows
             rust: nightly
+          - name: Windows
+            os: windows
+            rust: 1.62.0
     steps:
       - uses: actions/checkout@v3
       - uses: ./
@@ -30,6 +36,10 @@ jobs:
         id: toolchain
         with:
           toolchain: ${{matrix.rust}}
-      - name: Check ${{'${{steps.toolchain.outputs.cachekey}}'}}
+      - name: echo ${{'${{steps.toolchain.outputs.cachekey}}'}}
         run: echo '${{steps.toolchain.outputs.cachekey}}'
+      - name: check ${{'${{steps.toolchain.outputs.cachekey}}'}}
+        if: matrix.rust == '1.62.0'
+        run: cmp -s <(echo ${{steps.toolchain.outputs.cachekey}}) <(echo 20220627a831)
+        shell: bash
       - run: rustc --version
