@@ -42,8 +42,8 @@ All inputs are optional.
   </td>
 </tr>
 <tr>
-  <td><code>target</code></td>
-  <td>Additional target support to install e.g. <code>wasm32-unknown-unknown</code></td>
+  <td><code>targets</code></td>
+  <td>Comma-separated string of additional targets to install e.g. <code>wasm32-unknown-unknown</code></td>
 </tr>
 <tr>
   <td><code>components</code></td>
