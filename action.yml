@@ -34,6 +34,7 @@ runs:
         targets: ${{inputs.target}}
         components: ${{inputs.components}}
       shell: bash
+
     - run: |
         : install rustup if needed
         if ! command -v rustup &> /dev/null ; then
@@ -42,11 +43,14 @@ runs:
         fi
       if: runner.os != 'Windows'
       shell: bash
+
     - name: rustup toolchain install ${{inputs.toolchain}}
       run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal${{steps.flags.outputs.downgrade}} --no-self-update
       shell: bash
+
     - run: rustup default ${{inputs.toolchain}}
       shell: bash
+
     - id: rustc-version
       run: |
         : create cachekey
@@ -54,5 +58,6 @@ runs:
         HASH=$(rustc +${{inputs.toolchain}} --version --verbose | sed -ne 's/^commit-hash: //p')
         echo "::set-output name=cachekey::$(echo $DATE$HASH | head -c12)"
       shell: bash
+
     - run: rustc +${{inputs.toolchain}} --version --verbose
       shell: bash
