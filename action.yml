@@ -30,13 +30,11 @@ runs:
     - id: flags
       run: |
         : construct rustup command line
-        if [[ -z "$targets" ]]; then targets=$target; fi
         echo "::set-output name=targets::$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)"
         echo "::set-output name=components::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
         echo "::set-output name=downgrade::${{inputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}"
       env:
-        targets: ${{inputs.targets}}
-        target: ${{inputs.target}}
+        targets: ${{inputs.targets || input.target || ''}}
         components: ${{inputs.components}}
       shell: bash
 
