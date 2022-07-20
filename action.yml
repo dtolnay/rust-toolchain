@@ -9,8 +9,11 @@ inputs:
   toolchain:
     description: Rust toolchain specification -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
     required: true
+  targets:
+    description: Comma-separated list of target triples to install for this toolchain
+    required: false
   target:
-    description: Target triple to install for this toolchain
+    description: Alias for `targets`
     required: false
   components:
     description: Comma-separated list of components to be additionally installed
@@ -27,6 +30,9 @@ runs:
     - id: flags
       run: |
         : construct rustup command line
+        if [[ -z "$targets" ]]; then
+          targets="$target"
+        fi
         echo "::set-output name=targets::$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)"
         echo "::set-output name=components::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
         echo "::set-output name=downgrade::${{inputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}"
