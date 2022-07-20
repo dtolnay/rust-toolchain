@@ -35,7 +35,7 @@ runs:
         echo "::set-output name=components::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
         echo "::set-output name=downgrade::${{inputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}"
       env:
-        targets: ${{inputs.target}}
+        targets: ${{inputs.targets}}
         target: ${{inputs.target}}
         components: ${{inputs.components}}
       shell: bash
