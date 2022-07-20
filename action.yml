@@ -59,5 +59,10 @@ runs:
         echo "::set-output name=cachekey::$(echo $DATE$HASH | head -c12)"
       shell: bash
 
+    - run: |
+        : disable incremental compilation
+        echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV
+      shell: bash
+
     - run: rustc +${{inputs.toolchain}} --version --verbose
       shell: bash
