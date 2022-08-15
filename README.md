@@ -1,7 +1,7 @@
 # Install Rust Toolchain
 
 This GitHub Action installs a Rust toolchain using rustup. It is designed for
-one-line concise usage.
+one-line concise usage and good defaults.
 
 ## Example workflow
 
