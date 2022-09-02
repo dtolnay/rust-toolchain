@@ -6,6 +6,9 @@ on:
   pull_request:
   schedule: [cron: "40 1 * * *"]
 
+permissions:
+  contents: read
+
 jobs:
   install:
     name: Rust ${{matrix.rust}} on ${{matrix.name}}
