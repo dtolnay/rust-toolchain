@@ -30,11 +30,11 @@ runs:
     - id: parse
       run: |
         : parse toolchain version
-        if [[ $toolchain =~ ^[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
+        if [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
           if [[ ${{runner.os}} == macOS ]]; then
-            echo "::set-output name=toolchain::1.$((($(date -v-$(sed 's/\([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))"
+            echo "::set-output name=toolchain::1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))"
           else
-            echo "::set-output name=toolchain::1.$((($(date --date "$toolchain" +%s)/60/60/24-16569)/7/6))"
+            echo "::set-output name=toolchain::1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))"
           fi
         elif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then
           echo "::set-output name=toolchain::1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))"

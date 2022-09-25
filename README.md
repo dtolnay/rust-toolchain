@@ -67,7 +67,7 @@ compiler support.
      # offset, which may be written in years, months, weeks, or days.
   - uses: dtolnay/rust-toolchain@master
     with:
-      toolchain: 18 months ago
+      toolchain: stable 18 months ago
 ```
 
 ```yaml
