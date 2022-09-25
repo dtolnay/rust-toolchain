@@ -18,7 +18,7 @@ jobs:
       matrix:
         name: [Linux]
         os: [ubuntu]
-        rust: [nightly, beta, stable, 1.62.0, 1.0.0, 18 months ago, stable minus 8 releases]
+        rust: [nightly, beta, stable, 1.62.0, 1.0.0, stable 18 months ago, stable minus 8 releases]
         include:
           - name: macOS
             os: macos
@@ -28,7 +28,7 @@ jobs:
             rust: 1.62.0
           - name: macOS
             os: macos
-            rust: 18 months ago
+            rust: stable 18 months ago
           - name: macOS
             os: macos
             rust: stable minus 8 releases
@@ -40,7 +40,7 @@ jobs:
             rust: 1.62.0
           - name: Windows
             os: windows
-            rust: 18 months ago
+            rust: stable 18 months ago
           - name: Windows
             os: windows
             rust: stable minus 8 releases
