@@ -18,7 +18,7 @@ jobs:
       matrix:
         name: [Linux]
         os: [ubuntu]
-        rust: [nightly, beta, stable, 1.62.0, 1.0.0]
+        rust: [nightly, beta, stable, 1.62.0, 1.0.0, 18 months ago, stable minus 8 releases]
         include:
           - name: macOS
             os: macos
@@ -26,16 +26,28 @@ jobs:
           - name: macOS
             os: macos
             rust: 1.62.0
+          - name: macOS
+            os: macos
+            rust: 18 months ago
+          - name: macOS
+            os: macos
+            rust: stable minus 8 releases
           - name: Windows
             os: windows
             rust: nightly
           - name: Windows
             os: windows
             rust: 1.62.0
+          - name: Windows
+            os: windows
+            rust: 18 months ago
+          - name: Windows
+            os: windows
+            rust: stable minus 8 releases
     steps:
       - uses: actions/checkout@v3
       - uses: ./
-        name: Run dtolnay/rust-toolchain@${{matrix.rust}}
+        name: Run dtolnay/rust-toolchain${{contains(matrix.rust, ' ') && ' for ' || '@'}}${{matrix.rust}}
         id: toolchain
         with:
           toolchain: ${{matrix.rust}}
