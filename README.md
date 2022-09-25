@@ -3,6 +3,8 @@
 This GitHub Action installs a Rust toolchain using rustup. It is designed for
 one-line concise usage and good defaults.
 
+<br>
+
 ## Example workflow
 
 ```yaml
@@ -23,6 +25,8 @@ The selection of Rust toolchain is made based on the particular @rev of this
 Action being requested. For example "dtolnay/rust-toolchain@nightly" pulls in
 the nightly Rust toolchain, while "dtolnay/rust-toolchain@1.42.0" pulls in
 1.42.0.
+
+<br>
 
 ## Inputs
 
@@ -50,6 +54,31 @@ All inputs are optional.
   <td>Comma-separated string of additional components to install e.g. <code>clippy, rustfmt</code></td>
 </tr>
 </table>
+
+<br>
+
+## Toolchain expressions
+
+The following forms are available for projects that use a sliding window of
+compiler support.
+
+```yaml
+     # Installs the most recent stable toolchain as of the specified time
+     # offset, which may be written in years, months, weeks, or days.
+  - uses: dtolnay/rust-toolchain@master
+    with:
+      toolchain: 18 months ago
+```
+
+```yaml
+     # Installs the stable toolchain which preceded the most recent one by
+     # the specified number of minor versions.
+  - uses: dtolnay/rust-toolchain@master
+    with:
+      toolchain: stable minus 8 releases
+```
+
+<br>
 
 ## License
 

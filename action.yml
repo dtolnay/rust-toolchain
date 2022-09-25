@@ -27,6 +27,24 @@ outputs:
 runs:
   using: composite
   steps:
+    - id: parse
+      run: |
+        : parse toolchain version
+        if [[ $toolchain =~ ^[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
+          if [[ ${{runner.os}} == macOS ]]; then
+            echo "::set-output name=toolchain::1.$((($(date -v-$(sed 's/\([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))"
+          else
+            echo "::set-output name=toolchain::1.$((($(date --date "$toolchain" +%s)/60/60/24-16569)/7/6))"
+          fi
+        elif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then
+          echo "::set-output name=toolchain::1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))"
+        else
+          echo "::set-output name=toolchain::$toolchain"
+        fi
+      env:
+        toolchain: ${{inputs.toolchain}}
+      shell: bash
+
     - id: flags
       run: |
         : construct rustup command line
@@ -47,18 +65,18 @@ runs:
       if: runner.os != 'Windows'
       shell: bash
 
-    - name: rustup toolchain install ${{inputs.toolchain}}
-      run: rustup toolchain install ${{inputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal${{steps.flags.outputs.downgrade}} --no-self-update
+    - name: rustup toolchain install ${{steps.parse.outputs.toolchain}}
+      run: rustup toolchain install ${{steps.parse.outputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal${{steps.flags.outputs.downgrade}} --no-self-update
       shell: bash
 
-    - run: rustup default ${{inputs.toolchain}}
+    - run: rustup default ${{steps.parse.outputs.toolchain}}
       shell: bash
 
     - id: rustc-version
       run: |
         : create cachekey
-        DATE=$(rustc +${{inputs.toolchain}} --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
-        HASH=$(rustc +${{inputs.toolchain}} --version --verbose | sed -ne 's/^commit-hash: //p')
+        DATE=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
+        HASH=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-hash: //p')
         echo "::set-output name=cachekey::$(echo $DATE$HASH | head -c12)"
       shell: bash
 
@@ -67,5 +85,5 @@ runs:
         echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV
       shell: bash
 
-    - run: rustc +${{inputs.toolchain}} --version --verbose
+    - run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
       shell: bash
