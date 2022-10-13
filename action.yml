@@ -32,14 +32,14 @@ runs:
         : parse toolchain version
         if [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
           if [[ ${{runner.os}} == macOS ]]; then
-            echo "::set-output name=toolchain::1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))"
+            echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=toolchain::1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))"
+            echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT
           fi
         elif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then
-          echo "::set-output name=toolchain::1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))"
+          echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=toolchain::$toolchain"
+          echo "toolchain=$toolchain" >> $GITHUB_OUTPUT
         fi
       env:
         toolchain: ${{inputs.toolchain}}
@@ -48,9 +48,9 @@ runs:
     - id: flags
       run: |
         : construct rustup command line
-        echo "::set-output name=targets::$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)"
-        echo "::set-output name=components::$(for c in ${components//,/ }; do echo -n ' --component' $c; done)"
-        echo "::set-output name=downgrade::${{inputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}"
+        echo "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT
+        echo "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT
+        echo "downgrade=${{inputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}" >> $GITHUB_OUTPUT
       env:
         targets: ${{inputs.targets || inputs.target || ''}}
         components: ${{inputs.components}}
@@ -77,7 +77,7 @@ runs:
         : create cachekey
         DATE=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
         HASH=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-hash: //p')
-        echo "::set-output name=cachekey::$(echo $DATE$HASH | head -c12)"
+        echo "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT
       shell: bash
 
     - run: |
