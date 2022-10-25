@@ -85,5 +85,10 @@ runs:
         echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV
       shell: bash
 
+    - run: |
+        : enable colors in Cargo output
+        echo CARGO_TERM_COLOR=always >> $GITHUB_ENV
+      shell: bash
+
     - run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
       shell: bash
