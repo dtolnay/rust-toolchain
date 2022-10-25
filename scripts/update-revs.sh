@@ -14,11 +14,16 @@ patch_releases=(
 )
 
 releases() {
-    printf "%s\n" 1.{0..70}{,.0} ${patch_releases[@]} | sort -V
+    printf "%s\n" 1.{0..70}.0 ${patch_releases[@]} | sort -V
 }
 
 base=$(git rev-parse HEAD)
 push=()
+
+declare -A minor
+for rev in `releases`; do
+    minor[${rev%.*}]=$rev
+done
 
 for rev in `releases` stable beta nightly; do
     echo "Updating $rev branch"
@@ -29,6 +34,9 @@ for rev in `releases` stable beta nightly; do
     git commit --quiet --message "toolchain: $rev"
     git checkout --quiet -b $rev
     push+=("$rev:refs/heads/$rev")
+    if [ ${minor[${rev%.*}]} == $rev ]; then
+        push+=("$rev:refs/heads/${rev%.*}")
+    fi
 done
 
 for tool in clippy miri; do
