@@ -34,7 +34,7 @@ for rev in `releases` stable beta nightly; do
     git commit --quiet --message "toolchain: $rev"
     git checkout --quiet -b $rev
     push+=("$rev:refs/heads/$rev")
-    if [ ${minor[${rev%.*}]} == $rev ]; then
+    if [ "${minor[${rev%.*}]}" == $rev ]; then
         push+=("$rev:refs/heads/${rev%.*}")
     fi
 done
