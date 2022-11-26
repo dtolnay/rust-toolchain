@@ -44,6 +44,7 @@ jobs:
           - name: Windows
             os: windows
             rust: stable minus 8 releases
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
       - uses: ./
