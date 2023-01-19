@@ -90,5 +90,10 @@ runs:
         echo CARGO_TERM_COLOR=always >> $GITHUB_ENV
       shell: bash
 
+    - run: |
+        : enable Cargo sparse registry
+        echo CARGO_UNSTABLE_SPARSE_REGISTRY=true >> $GITHUB_ENV
+      shell: bash
+
     - run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
       shell: bash
