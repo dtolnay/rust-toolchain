@@ -1,0 +1,11 @@
+{
+    "name": "rust-toolchain",
+    "version": "0.0.0",
+    "description": "Install the Rust toolchain",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dtolnay/rust-toolchain.git"
+    },
+    "author": "dtolnay",
+    "license": "MIT"
+}
