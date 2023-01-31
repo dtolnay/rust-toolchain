@@ -91,7 +91,7 @@ runs:
       shell: bash
 
     - run: |
-        : enable Cargo sparse registry (ignored by stable cargo)
+        : enable Cargo sparse registry  # ignored by stable cargo
         echo CARGO_UNSTABLE_SPARSE_REGISTRY=true >> $GITHUB_ENV
       shell: bash
 
