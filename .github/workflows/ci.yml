@@ -11,39 +11,16 @@ permissions:
 
 jobs:
   install:
-    name: Rust ${{matrix.rust}} on ${{matrix.name}}
+    name: Rust ${{matrix.rust}} on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
     runs-on: ${{matrix.os}}-latest
     strategy:
       fail-fast: false
       matrix:
-        name: [Linux]
-        os: [ubuntu]
-        rust: [nightly, beta, stable, 1.62.0, 1.0.0, stable 18 months ago, stable minus 8 releases]
+        os: [ubuntu, macos, windows]
+        rust: [nightly, beta, stable, 1.62.0, stable 18 months ago, stable minus 8 releases]
         include:
-          - name: macOS
-            os: macos
-            rust: nightly
-          - name: macOS
-            os: macos
-            rust: 1.62.0
-          - name: macOS
-            os: macos
-            rust: stable 18 months ago
-          - name: macOS
-            os: macos
-            rust: stable minus 8 releases
-          - name: Windows
-            os: windows
-            rust: nightly
-          - name: Windows
-            os: windows
-            rust: 1.62.0
-          - name: Windows
-            os: windows
-            rust: stable 18 months ago
-          - name: Windows
-            os: windows
-            rust: stable minus 8 releases
+          - os: ubuntu
+            rust: 1.0.0
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
