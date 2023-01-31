@@ -17,13 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: IronCoreLabs/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --all-features
 ```
 
 The selection of Rust toolchain is made based on the particular @rev of this
-Action being requested. For example "IronCoreLabs/rust-toolchain@nightly" pulls in
-the nightly Rust toolchain, while "IronCoreLabs/rust-toolchain@1.42.0" pulls in
+Action being requested. For example "dtolnay/rust-toolchain@nightly" pulls in
+the nightly Rust toolchain, while "dtolnay/rust-toolchain@1.42.0" pulls in
 1.42.0.
 
 ## Toolchain File
@@ -45,7 +45,7 @@ All inputs are optional.
   <td>
     Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.42.0</code>, <code>nightly-2022-01-01</code>.
     <b>Important: the default is to match the @rev as described above.</b>
-    When passing an explicit <code>toolchain</code> as an input instead of @rev, you'll want to use "IronCoreLabs/rust-toolchain@master" as the revision of the action.
+    When passing an explicit <code>toolchain</code> as an input instead of @rev, you'll want to use "dtolnay/rust-toolchain@master" as the revision of the action.
   </td>
 </tr>
 <tr>
@@ -70,7 +70,7 @@ All inputs are optional.
 <tr>
   <td><code>toolchain</code></td>
   <td>
-    The parsed toolchain that was installed by this action.
+    Rustup's name for the selected version of the toolchain. "1.62.0"
   </td>
 </tr>
 <tr>
@@ -89,7 +89,7 @@ compiler support.
 ```yaml
      # Installs the most recent stable toolchain as of the specified time
      # offset, which may be written in years, months, weeks, or days.
-  - uses: IronCoreLabs/rust-toolchain@master
+  - uses: dtolnay/rust-toolchain@master
     with:
       toolchain: stable 18 months ago
 ```
@@ -97,7 +97,7 @@ compiler support.
 ```yaml
      # Installs the stable toolchain which preceded the most recent one by
      # the specified number of minor versions.
-  - uses: IronCoreLabs/rust-toolchain@master
+  - uses: dtolnay/rust-toolchain@master
     with:
       toolchain: stable minus 8 releases
 ```
