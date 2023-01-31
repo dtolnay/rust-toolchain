@@ -8,7 +8,7 @@ branding:
 inputs:
   toolchain:
     description: Rust toolchain specification -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
-    required: true
+    required: false
   targets:
     description: Comma-separated list of target triples to install for this toolchain
     required: false
@@ -30,6 +30,28 @@ outputs:
 runs:
   using: composite
   steps:
+    - id: extract-toml-values
+      run: |
+        # once https://github.com/mikefarah/yq/pull/1439 is merged, the yq already on the system will have toml support
+        pip3 install yq
+        TOML_FILE=$(ls rust-toolchain.toml || ls rust-toolchain)
+        if [ -z "$TOML_FILE" ]; then
+          echo "rust-toolchain{.toml} not found, expecting explicit inputs"
+          exit 0
+        fi
+        TOML_TOOLCHAIN=$(tomlq -r '.toolchain.channel | select(. != null)' $TOML_FILE)
+        if [ -n "$TOML_TOOLCHAIN" ]; then
+          echo "toml-toolchain=$TOML_TOOLCHAIN" >> $GITHUB_OUTPUT
+        fi
+        TOML_TARGETS=$(tomlq -r '.toolchain.targets | select(. != null) | @csv' $TOML_FILE)
+        if [ -n "$TOML_TARGETS" ]; then
+          echo "toml-targets=$TOML_TARGETS" >> $GITHUB_OUTPUT
+        fi
+        TOML_COMPONENTS=$(tomlq -r '.toolchain.components | select(. != null) | @csv' $TOML_FILE)
+        if [ -n "$TOML_COMPONENTS" ]; then
+          echo "toml-components=$TOML_COMPONENTS" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
     - id: parse
       run: |
         : parse toolchain version
@@ -45,7 +67,7 @@ runs:
           echo "toolchain=$toolchain" >> $GITHUB_OUTPUT
         fi
       env:
-        toolchain: ${{inputs.toolchain}}
+        toolchain: ${{inputs.toolchain || steps.extract-toml-values.outputs.toml-toolchain || 'stable'}}
       shell: bash
 
     - id: flags
@@ -55,8 +77,8 @@ runs:
         echo "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT
         echo "downgrade=${{inputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}" >> $GITHUB_OUTPUT
       env:
-        targets: ${{inputs.targets || inputs.target || ''}}
-        components: ${{inputs.components}}
+        targets: ${{inputs.targets || inputs.target || steps.extract-toml-values.outputs.toml-targets || ''}}
+        components: ${{inputs.components || steps.extract-toml-values.outputs.toml-components }}
       shell: bash
 
     - run: |
