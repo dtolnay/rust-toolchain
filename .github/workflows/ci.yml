@@ -36,3 +36,9 @@ jobs:
         run: cmp -s <(echo ${{steps.toolchain.outputs.cachekey}}) <(echo 20220627a831)
         shell: bash
       - run: rustc --version
+      - run: cargo init . --bin --name CI
+        if: matrix.rust == 'nightly' || matrix.rust == 'beta' || matrix.rust == 'stable'
+      - run: cargo add syn@1
+        if: matrix.rust == 'nightly' || matrix.rust == 'beta' || matrix.rust == 'stable'
+      - run: cargo check
+        if: matrix.rust == 'nightly' || matrix.rust == 'beta' || matrix.rust == 'stable'
