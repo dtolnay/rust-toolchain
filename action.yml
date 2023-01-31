@@ -23,6 +23,9 @@ outputs:
   cachekey:
     description: A short hash of the rustc version, appropriate for use as a cache key. "20220627a831"
     value: ${{steps.rustc-version.outputs.cachekey}}
+  name:
+    description: Rustup's name for the selected version of the toolchain. "1.62.0"  # suitable for use with `cargo +${{steps.toolchain.outputs.name}}`
+    value: ${{steps.parse.outputs.toolchain}}
 
 runs:
   using: composite
