@@ -57,6 +57,25 @@ All inputs are optional.
 
 <br>
 
+## Outputs
+
+<table>
+<tr>
+  <th>Name</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td><code>cachekey</code></td>
+  <td>A short hash of the installed rustc version, appropriate for use as a cache key. <code>"20220627a831"</code></td>
+</tr>
+<tr>
+  <td><code>name</code></td>
+  <td>Rustup's name for the selected version of the toolchain, like <code>"1.62.0"</code>. Suitable for use with <code>cargo +${{steps.toolchain.outputs.name}}</code>.</td>
+</tr>
+</table>
+
+<br>
+
 ## Toolchain expressions
 
 The following forms are available for projects that use a sliding window of
