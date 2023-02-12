@@ -85,17 +85,23 @@ runs:
 
     - run: |
         : disable incremental compilation
-        echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV
+        if [ -z ${CARGO_INCREMENTAL+set} ]; then
+          echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV
+        fi
       shell: bash
 
     - run: |
         : enable colors in Cargo output
-        echo CARGO_TERM_COLOR=always >> $GITHUB_ENV
+        if [ -z ${CARGO_TERM_COLOR+set} ]; then
+          echo CARGO_TERM_COLOR=always >> $GITHUB_ENV
+        fi
       shell: bash
 
     - run: |
         : enable Cargo sparse registry  # ignored by stable cargo
-        echo CARGO_UNSTABLE_SPARSE_REGISTRY=true >> $GITHUB_ENV
+        if [ -z ${CARGO_UNSTABLE_SPARSE_REGISTRY+set} ]; then
+          echo CARGO_UNSTABLE_SPARSE_REGISTRY=true >> $GITHUB_ENV
+        fi
       shell: bash
 
     - run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
