@@ -98,7 +98,8 @@ runs:
       shell: bash
 
     - run: |
-        : enable Cargo sparse registry  # except on 1.66 and 1.67, on which it is unstable
+        : enable Cargo sparse registry
+        # except on 1.66 and 1.67, on which it is unstable
         if [ -z ${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set} ] \
           && ! rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: 1\.6[67]\.'
         then
