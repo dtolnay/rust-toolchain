@@ -106,12 +106,5 @@ runs:
         fi
       shell: bash
 
-    - run: |
-        : enable randomized type layout
-        if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: .*nightly'; then
-          echo RUSTFLAGS="-Zrandomize-layout ${RUSTFLAGS}" >> $GITHUB_ENV
-        fi
-      shell: bash
-
     - run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
       shell: bash
