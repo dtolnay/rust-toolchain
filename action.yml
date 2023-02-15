@@ -85,14 +85,14 @@ runs:
 
     - run: |
         : disable incremental compilation
-        if [ -z ${CARGO_INCREMENTAL+set} ]; then
+        if [ -z "${CARGO_INCREMENTAL+set}" ]; then
           echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV
         fi
       shell: bash
 
     - run: |
         : enable colors in Cargo output
-        if [ -z ${CARGO_TERM_COLOR+set} ]; then
+        if [ -z "${CARGO_TERM_COLOR+set}" ]; then
           echo CARGO_TERM_COLOR=always >> $GITHUB_ENV
         fi
       shell: bash
@@ -100,7 +100,7 @@ runs:
     - run: |
         : enable Cargo sparse registry
         # except on 1.66 and 1.67, on which it is unstable
-        if [ -z ${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set} ]; then
+        if [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" ]; then
           if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | (! grep -q '^release: 1\.6[67]\.'); then
             echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV
           fi
