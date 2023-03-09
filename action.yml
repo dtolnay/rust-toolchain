@@ -1,23 +1,9 @@
-name: rustup toolchain install
-author: David Tolnay
-description: Install the Rust toolchain
+name: rust-toolchain.toml setup
+author: David Tolnay, David Sherret
+description: Install the Rust toolchain via a rust-toolchain.toml file
 branding:
   icon: activity
   color: purple
-
-inputs:
-  toolchain:
-    description: Rust toolchain specification -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
-    required: true
-  targets:
-    description: Comma-separated list of target triples to install for this toolchain
-    required: false
-  target:
-    description: Alias for `targets`
-    required: false
-  components:
-    description: Comma-separated list of components to be additionally installed
-    required: false
 
 outputs:
   cachekey:
@@ -30,22 +16,17 @@ outputs:
 runs:
   using: composite
   steps:
-    - id: parse
+    - id: ensure-toolchain-file
       run: |
-        : parse toolchain version
-        if [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
-          if [[ ${{runner.os}} == macOS ]]; then
-            echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT
-          else
-            echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT
-          fi
-        elif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then
-          echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT
+        if [[ -f "rust-toolchain" || -f "rust-toolchain.toml" ]]
+        then
+          echo "found toolchain"
         else
-          echo "toolchain=$toolchain" >> $GITHUB_OUTPUT
+          echo "No rust-toolchain or rust-toolchain.toml file found in repo."
+          echo "Please ensure the repo is checked out first or add this file."
+          echo "If you don't want this file, then please use https://github.com/dtolnay/rust-toolchain"
+          exit 1
         fi
-      env:
-        toolchain: ${{inputs.toolchain}}
       shell: bash
 
     - id: flags
@@ -68,18 +49,15 @@ runs:
       if: runner.os != 'Windows'
       shell: bash
 
-    - name: rustup toolchain install ${{steps.parse.outputs.toolchain}}
-      run: rustup toolchain install ${{steps.parse.outputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal${{steps.flags.outputs.downgrade}} --no-self-update
-      shell: bash
-
-    - run: rustup default ${{steps.parse.outputs.toolchain}}
+    - name: rustup toolchain install
+      run: rustup toolchain install --no-self-update
       shell: bash
 
     - id: rustc-version
       run: |
         : create cachekey
-        DATE=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
-        HASH=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-hash: //p')
+        DATE=$(rustc --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
+        HASH=$(rustc --version --verbose | sed -ne 's/^commit-hash: //p')
         echo "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT
       shell: bash
 
@@ -102,7 +80,7 @@ runs:
         # except on 1.66 and 1.67, on which it is unstable
         if [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol ]; then
           touch "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol || true
-          if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | (! grep -q '^release: 1\.6[67]\.'); then
+          if rustc --version --verbose | (! grep -q '^release: 1\.6[67]\.'); then
             echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV
           else
             echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV
@@ -110,5 +88,5 @@ runs:
         fi
       shell: bash
 
-    - run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
+    - run: rustc --version --verbose
       shell: bash

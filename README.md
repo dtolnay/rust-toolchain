@@ -1,11 +1,18 @@
-# Install Rust Toolchain
+# Install Rust Toolchain via rust-toolchain.toml
 
-This GitHub Action installs a Rust toolchain using rustup. It is designed for
-one-line concise usage and good defaults.
-
-<br>
+Fork of https://github.com/dtolnay/rust-toolchain that supports and makes it mandatory to use a rust-toolchain.toml file.
 
 ## Example workflow
+
+Create a [`rust-toolchain.toml`](https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file) file:
+
+```toml
+[toolchain]
+channel = "1.68"
+components = [ "rustfmt", "clippy" ]
+```
+
+Then add an entry to this action in your github actions:
 
 ```yaml
 name: test suite
@@ -17,45 +24,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dsherret/rust-toolchain-file@1
       - run: cargo test --all-features
 ```
 
-The selection of Rust toolchain is made based on the particular @rev of this
-Action being requested. For example "dtolnay/rust-toolchain@nightly" pulls in
-the nightly Rust toolchain, while "dtolnay/rust-toolchain@1.42.0" pulls in
-1.42.0.
-
-<br>
+The selection of Rust toolchain is made based on the rust-toolchain.toml file.
 
 ## Inputs
 
-All inputs are optional.
-
-<table>
-<tr>
-  <th>Name</th>
-  <th>Description</th>
-</tr>
-<tr>
-  <td><code>toolchain</code></td>
-  <td>
-    Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.42.0</code>, <code>nightly-2022-01-01</code>.
-    <b>Important: the default is to match the @rev as described above.</b>
-    When passing an explicit <code>toolchain</code> as an input instead of @rev, you'll want to use "dtolnay/rust-toolchain@master" as the revision of the action.
-  </td>
-</tr>
-<tr>
-  <td><code>targets</code></td>
-  <td>Comma-separated string of additional targets to install e.g. <code>wasm32-unknown-unknown</code></td>
-</tr>
-<tr>
-  <td><code>components</code></td>
-  <td>Comma-separated string of additional components to install e.g. <code>clippy, rustfmt</code></td>
-</tr>
-</table>
-
-<br>
+None. You must define everything in the rust-toolchain.toml file.
 
 ## Outputs
 
@@ -73,31 +50,6 @@ All inputs are optional.
   <td>Rustup's name for the selected version of the toolchain, like <code>"1.62.0"</code>. Suitable for use with <code>cargo +${{steps.toolchain.outputs.name}}</code>.</td>
 </tr>
 </table>
-
-<br>
-
-## Toolchain expressions
-
-The following forms are available for projects that use a sliding window of
-compiler support.
-
-```yaml
-     # Installs the most recent stable toolchain as of the specified time
-     # offset, which may be written in years, months, weeks, or days.
-  - uses: dtolnay/rust-toolchain@master
-    with:
-      toolchain: stable 18 months ago
-```
-
-```yaml
-     # Installs the stable toolchain which preceded the most recent one by
-     # the specified number of minor versions.
-  - uses: dtolnay/rust-toolchain@master
-    with:
-      toolchain: stable minus 8 releases
-```
-
-<br>
 
 ## License
 

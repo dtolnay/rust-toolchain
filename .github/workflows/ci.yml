@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
   workflow_dispatch:
   schedule: [cron: "40 1 * * *"]
@@ -25,8 +25,13 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
+      - name: Create toolchain file
+        run: |
+          echo "[toolchain]" >> rust-toolchain.toml
+          echo "channel = \"${{matrix.rust}}\"" >> rust-toolchain.toml
+          cat rust-toolchain.toml
       - uses: ./
-        name: Run dtolnay/rust-toolchain${{contains(matrix.rust, ' ') && ' for ' || '@'}}${{matrix.rust}}
+        name: Run dsherret/rust-toolchain-file${{contains(matrix.rust, ' ') && ' for ' || '@'}}${{matrix.rust}}
         id: toolchain
         with:
           toolchain: ${{matrix.rust}}
