@@ -99,12 +99,13 @@ runs:
 
     - run: |
         : enable Cargo sparse registry
-        # except on 1.66 and 1.67, on which it is unstable
+        # implemented in 1.66, stabilized in 1.68, made default in 1.70
         if [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol ]; then
-          touch "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol || true
-          if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | (! grep -q '^release: 1\.6[67]\.'); then
+          if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: 1\.6[89]\.'; then
+            touch "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol || true
             echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV
-          else
+          elif rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: 1\.6[67]\.'; then
+            touch "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol || true
             echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV
           fi
         fi
