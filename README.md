@@ -88,7 +88,7 @@ compiler support.
      # offset, which may be written in years, months, weeks, or days.
   - uses: dtolnay/rust-toolchain@master
     with:
-      toolchain: stable 18 months ago
+      toolchain: 'stable 18 months ago'
 ```
 
 ```yaml
@@ -96,7 +96,7 @@ compiler support.
      # the specified number of minor versions.
   - uses: dtolnay/rust-toolchain@master
     with:
-      toolchain: stable minus 8 releases
+      toolchain: 'stable minus 8 releases'
 ```
 
 <br>
