@@ -43,6 +43,8 @@ All inputs are optional.
     Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.42.0</code>, <code>nightly-2022-01-01</code>.
     <b>Important: the default is to match the @rev as described above.</b>
     When passing an explicit <code>toolchain</code> as an input instead of @rev, you'll want to use "dtolnay/rust-toolchain@master" as the revision of the action.
+    <b>Also important: use quotes to ensure that the right toolchain version is passed to this GitHub Action.</b>
+    For example, specify <code>toolchain: '1.70'</code> (with quotes) because <code>toolchain: 1.70</code> will be parsed as <code>toolchain: 1.7</code>.
   </td>
 </tr>
 <tr>
