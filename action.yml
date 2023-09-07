@@ -111,5 +111,13 @@ runs:
         fi
       shell: bash
 
+    - run: |
+        : work around spurious network errors in curl 8.0
+        # https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation
+        if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: 1\.7[01]\.'; then
+          echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV
+        fi
+      shell: bash
+
     - run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
       shell: bash
