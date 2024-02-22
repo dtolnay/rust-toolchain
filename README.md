@@ -18,7 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-        toolchain: stable
+        with:
+          toolchain: stable
       - run: cargo test --all-features
 ```
 
