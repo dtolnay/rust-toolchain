@@ -30,6 +30,9 @@ jobs:
         id: toolchain
         with:
           toolchain: ${{matrix.rust}}
+      - name: Additional Cargo Commands
+        run: |
+          cargo update
       - name: echo ${{'${{steps.toolchain.outputs.cachekey}}'}}
         run: echo '${{steps.toolchain.outputs.cachekey}}'
       - name: check ${{'${{steps.toolchain.outputs.cachekey}}'}}
