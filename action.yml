@@ -53,7 +53,7 @@ runs:
         : construct rustup command line
         echo "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT
         echo "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT
-        echo "downgrade=${{inputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}" >> $GITHUB_OUTPUT
+        echo "downgrade=${{steps.parse.outputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}" >> $GITHUB_OUTPUT
       env:
         targets: ${{inputs.targets || inputs.target || ''}}
         components: ${{inputs.components}}
