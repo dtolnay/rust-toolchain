@@ -68,7 +68,9 @@ runs:
       if: runner.os != 'Windows'
       shell: bash
 
-    - run: echo CARGO_HOME=${CARGO_HOME:-${{runner.os == 'Windows' && '$USERPROFILE' || '$HOME'}}/.cargo} >> $GITHUB_ENV
+    - run: |
+        : set $CARGO_HOME
+        echo CARGO_HOME=${CARGO_HOME:-${{runner.os == 'Windows' && '$USERPROFILE' || '$HOME'}}/.cargo} >> $GITHUB_ENV
       shell: bash
 
     - name: rustup toolchain install ${{steps.parse.outputs.toolchain}}
