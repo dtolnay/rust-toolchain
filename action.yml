@@ -60,17 +60,17 @@ runs:
       shell: bash
 
     - run: |
-        : install rustup if needed
-        if ! command -v rustup &>/dev/null; then
-          curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
-          echo "${CARGO_HOME:-$HOME/.cargo}/bin" >> $GITHUB_PATH
-        fi
-      if: runner.os != 'Windows'
+        : set $CARGO_HOME
+        echo CARGO_HOME=${CARGO_HOME:-${{runner.os == 'Windows' && '$USERPROFILE' || '$HOME'}}/.cargo} >> $GITHUB_ENV
       shell: bash
 
     - run: |
-        : set $CARGO_HOME
-        echo CARGO_HOME=${CARGO_HOME:-${{runner.os == 'Windows' && '$USERPROFILE' || '$HOME'}}/.cargo} >> $GITHUB_ENV
+        : install rustup if needed
+        if ! command -v rustup &>/dev/null; then
+          curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
+          echo "$CARGO_HOME/bin" >> $GITHUB_PATH
+        fi
+      if: runner.os != 'Windows'
       shell: bash
 
     - name: rustup toolchain install ${{steps.parse.outputs.toolchain}}
