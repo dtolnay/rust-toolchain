@@ -14,7 +14,7 @@ patch_releases=(
 )
 
 releases() {
-    printf "%s\n" 1.{0..80}.0 ${patch_releases[@]} | sort -V
+    printf "%s\n" 1.{0..90}.0 ${patch_releases[@]} | sort -V
 }
 
 base=$(git rev-parse HEAD)
