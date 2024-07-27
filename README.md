@@ -26,6 +26,8 @@ Action being requested. For example "dtolnay/rust-toolchain@nightly" pulls in
 the nightly Rust toolchain, while "dtolnay/rust-toolchain@1.42.0" pulls in
 1.42.0.
 
+***NOTE for Forgejo runners:** Use the repository `msrd0/rust-toolchain` instead of `dtolnay/rust-toolchain`*
+
 <br>
 
 ## Inputs
