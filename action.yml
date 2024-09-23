@@ -68,10 +68,9 @@ runs:
         : install rustup if needed
         if ! command -v rustup &>/dev/null; then
           if curl --help curl | grep --quiet retry-connrefused; then
-            curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
-          else
-            curl --proto '=https' --tlsv1.2 --retry 10 --location --silent --show-error --fail "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
+            OPTIONAL_CURL_ARGUMENT="--retry-connrefused"
           fi
+          curl --proto '=https' --tlsv1.2 --retry 10 $OPTIONAL_CURL_ARGUMENT --location --silent --show-error --fail "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
           echo "$CARGO_HOME/bin" >> $GITHUB_PATH
         fi
       if: runner.os != 'Windows'
