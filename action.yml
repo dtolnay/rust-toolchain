@@ -79,6 +79,7 @@ runs:
 
     - run: rustup default ${{steps.parse.outputs.toolchain}}
       shell: bash
+      continue-on-error: true  # https://github.com/dtolnay/rust-toolchain/issues/127
 
     - id: rustc-version
       run: |
