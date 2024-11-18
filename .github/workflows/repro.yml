@@ -1,0 +1,24 @@
+name: repro
+
+on:
+  push:
+    branches: [repro]
+
+permissions:
+  contents: read
+
+jobs:
+  repro:
+    name: Repro
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir -p broken/lib broken/bin
+      - run: touch broken/bin/rustc
+      - run: rustup toolchain link broken $PWD/broken
+      - run: rustup override set broken
+      - run: rm -r broken/
+      - uses: ./
+        with:
+          toolchain: beta
+      - run: rustc --version
