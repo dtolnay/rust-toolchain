@@ -41,6 +41,8 @@ runs:
           fi
         elif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then
           echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT
+        elif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then
+          echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT
         else
           echo "toolchain=$toolchain" >> $GITHUB_OUTPUT
         fi
