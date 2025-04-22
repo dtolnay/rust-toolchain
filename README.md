@@ -57,7 +57,7 @@ All inputs are optional.
   <td><code>make-default</code></td>
   <td>
     Make the installed toolchain the default.
-    This must be either the strings <code>'true'</code> or <code>'false'</code>, and is <code>'true'</code> by default.
+    This must be either the strings <code>true</code> or <code>false</code>, and is <code>true</code> by default.
   </td>
 </tr>
 </table>
