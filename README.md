@@ -53,6 +53,13 @@ All inputs are optional.
   <td><code>components</code></td>
   <td>Comma-separated string of additional components to install e.g. <code>clippy, rustfmt</code></td>
 </tr>
+<tr>
+  <td><code>make-default</code></td>
+  <td>
+    Make the installed toolchain the default.
+    This must be either the strings <code>'true'</code> or <code>'false'</code>, and is <code>'true'</code> by default.
+  </td>
+</tr>
 </table>
 
 <br>
