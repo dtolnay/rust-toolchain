@@ -18,6 +18,10 @@ inputs:
   components:
     description: Comma-separated list of components to be additionally installed
     required: false
+  make-default:
+    description: Make the installed toolchain the default -- must be 'true' or 'false'
+    required: false
+    default: 'true'
 
 outputs:
   cachekey:
@@ -81,6 +85,7 @@ runs:
 
     - run: rustup default ${{steps.parse.outputs.toolchain}}
       shell: bash
+      if: inputs.make-default == 'true'
       continue-on-error: true  # https://github.com/dtolnay/rust-toolchain/issues/127
 
     - id: rustc-version
