@@ -69,7 +69,7 @@ runs:
     - run: |
         : install rustup if needed
         if ! command -v rustup &>/dev/null; then
-          curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
+          curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y
           echo "$CARGO_HOME/bin" >> $GITHUB_PATH
         fi
       if: runner.os != 'Windows'
@@ -78,9 +78,9 @@ runs:
     - run: |
         : install rustup if needed on windows
         if ! command -v rustup &>/dev/null; then
-          curl -LOs https://static.rust-lang.org/rustup/dist/${{ runner.arch == 'ARM64' && 'aarch64' || 'x86_64' }}-pc-windows-msvc/rustup-init.exe
-          ./rustup-init.exe -y --default-toolchain none --no-modify-path
-          echo "$USERPROFILE/.cargo/bin" >> "$GITHUB_PATH"
+          curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail --remote-name https://static.rust-lang.org/rustup/dist/${{ runner.arch == 'ARM64' && 'aarch64' || 'x86_64' }}-pc-windows-msvc/rustup-init.exe
+          ./rustup-init.exe --default-toolchain none --no-modify-path -y
+          echo "$USERPROFILE/.cargo/bin" >> $GITHUB_PATH
         fi
       if: runner.os == 'Windows'
       shell: bash
