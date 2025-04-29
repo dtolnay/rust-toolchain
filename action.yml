@@ -80,7 +80,7 @@ runs:
         if ! command -v rustup &>/dev/null; then
           curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://static.rust-lang.org/rustup/dist/${{ runner.arch == 'ARM64' && 'aarch64' || 'x86_64' }}-pc-windows-msvc/rustup-init.exe --output '${{runner.temp}}\rustup-init.exe'
           '${{runner.temp}}\rustup-init.exe' --default-toolchain none --no-modify-path -y
-          echo "$USERPROFILE\.cargo\bin" >> $GITHUB_PATH
+          echo "$CARGO_HOME\bin" >> $GITHUB_PATH
         fi
       if: runner.os == 'Windows'
       shell: bash
