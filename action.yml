@@ -33,7 +33,11 @@ runs:
     - id: parse
       run: |
         : parse toolchain version
-        if [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
+        if [[ -z $toolchain ]]; then
+          # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070
+          echo "'toolchain' is a required input" >&2
+          exit 1
+        elif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
           if [[ ${{runner.os}} == macOS ]]; then
             echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT
           else
