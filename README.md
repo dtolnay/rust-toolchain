@@ -23,8 +23,8 @@ jobs:
 
 The selection of Rust toolchain is made based on the particular @rev of this
 Action being requested. For example "dtolnay/rust-toolchain@nightly" pulls in
-the nightly Rust toolchain, while "dtolnay/rust-toolchain@1.42.0" pulls in
-1.42.0.
+the nightly Rust toolchain, while "dtolnay/rust-toolchain@1.89.0" pulls in
+1.89.0.
 
 <br>
 
@@ -40,7 +40,7 @@ All inputs are optional.
 <tr>
   <td><code>toolchain</code></td>
   <td>
-    Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.42.0</code>, <code>nightly-2022-01-01</code>.
+    Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.89.0</code>, <code>nightly-2025-01-01</code>.
     <b>Important: the default is to match the @rev as described above.</b>
     When passing an explicit <code>toolchain</code> as an input instead of @rev, you'll want to use "dtolnay/rust-toolchain@master" as the revision of the action.
   </td>
@@ -66,7 +66,7 @@ All inputs are optional.
 </tr>
 <tr>
   <td><code>cachekey</code></td>
-  <td>A short hash of the installed rustc version, appropriate for use as a cache key. <code>"20220627a831"</code></td>
+  <td>A short hash of the installed rustc version, appropriate for use as a cache key. <code>"20250627a831"</code></td>
 </tr>
 <tr>
   <td><code>name</code></td>
