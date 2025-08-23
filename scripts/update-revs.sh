@@ -33,7 +33,7 @@ for rev in `releases` stable beta nightly; do
     if [[ $rev == 1* ]]; then
         sed -i "/^  toolchain:/,+2d; s/\${{inputs\.toolchain}}/$rev/" action.yml
     else
-        sed -i "s/required: true/required: false\n    default: $rev/" action.yml
+        sed -i "s/^    required: true$/    required: false\n    default: $rev/" action.yml
     fi
     git add action.yml
     git commit --quiet --message "toolchain: $rev"
