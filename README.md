@@ -99,6 +99,18 @@ compiler support.
 
 <br>
 
+## Choice of full-length commit SHA
+
+In a workflow that [pins the action][pin] using a full-length commit SHA (as
+opposed to something like @nightly or @1.89.0) it is required that you pick a
+SHA that is within the history of the master branch. Any commit that is not
+within the history of master will eventually get garbage-collected and your
+workflows will fail.
+
+[pin]: https://docs.github.com/en/actions/reference/security/secure-use#using-third-party-actions
+
+<br>
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT
