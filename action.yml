@@ -34,7 +34,6 @@ runs:
       run: |
         : parse toolchain version
         if [[ -z $toolchain ]]; then
-          # GitHub does not enforce 'required: true' inputs itself. https://github.com/actions/runner/issues/1070
           echo "'toolchain' is a required input" >&2
           exit 1
         elif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
