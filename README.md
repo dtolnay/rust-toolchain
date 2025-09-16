@@ -53,6 +53,10 @@ All inputs are optional.
   <td><code>components</code></td>
   <td>Comma-separated string of additional components to install e.g. <code>clippy, rustfmt</code></td>
 </tr>
+<tr>
+  <td><code>set-default</code></td>
+  <td>Whether to set the installed toolchain as the active default via <code>rustup default &lt;toolchain&gt;</code>. Defaults to <code>true</code>. Set to <code>false</code> if you only plan to use the toolchain with explicit <code>+toolchain</code> overrides in your commands and don't want to change the runner's global default.</td>
+</tr>
 </table>
 
 <br>
