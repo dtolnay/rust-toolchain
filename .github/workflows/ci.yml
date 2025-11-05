@@ -12,19 +12,19 @@ permissions:
 
 jobs:
   install:
-    name: Rust ${{matrix.rust}} on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
-    runs-on: ${{matrix.os}}-latest
+    name: Rust ${{matrix.rust}} on ${{matrix.os}}
+    runs-on: ${{matrix.os}}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos, windows]
+        os: [ubuntu-latest, macos-latest, windows-latest, windows-11-arm, ubuntu-22.04-arm]
         rust: [nightly, beta, stable, 1.62.0, stable 18 months ago, stable minus 8 releases]
         include:
-          - os: ubuntu
+          - os: ubuntu-latest
             rust: 1.0.0
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         name: Run dtolnay/rust-toolchain${{contains(matrix.rust, ' ') && ' for ' || '@'}}${{matrix.rust}}
         id: toolchain

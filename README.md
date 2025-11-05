@@ -16,15 +16,15 @@ jobs:
     name: cargo test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --all-features
 ```
 
 The selection of Rust toolchain is made based on the particular @rev of this
 Action being requested. For example "dtolnay/rust-toolchain@nightly" pulls in
-the nightly Rust toolchain, while "dtolnay/rust-toolchain@1.42.0" pulls in
-1.42.0.
+the nightly Rust toolchain, while "dtolnay/rust-toolchain@1.89.0" pulls in
+1.89.0.
 
 <br>
 
@@ -40,7 +40,7 @@ All inputs are optional.
 <tr>
   <td><code>toolchain</code></td>
   <td>
-    Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.42.0</code>, <code>nightly-2022-01-01</code>.
+    Rustup toolchain specifier e.g. <code>stable</code>, <code>nightly</code>, <code>1.89.0</code>, <code>nightly-2025-01-01</code>.
     <b>Important: the default is to match the @rev as described above.</b>
     When passing an explicit <code>toolchain</code> as an input instead of @rev, you'll want to use "dtolnay/rust-toolchain@master" as the revision of the action.
   </td>
@@ -66,7 +66,7 @@ All inputs are optional.
 </tr>
 <tr>
   <td><code>cachekey</code></td>
-  <td>A short hash of the installed rustc version, appropriate for use as a cache key. <code>"20220627a831"</code></td>
+  <td>A short hash of the installed rustc version, appropriate for use as a cache key. <code>"20250627a831"</code></td>
 </tr>
 <tr>
   <td><code>name</code></td>
@@ -96,6 +96,18 @@ compiler support.
     with:
       toolchain: stable minus 8 releases
 ```
+
+<br>
+
+## Choice of full-length commit SHA
+
+In a workflow that [pins the action][pin] using a full-length commit SHA (as
+opposed to something like @nightly or @1.89.0) it is required that you pick a
+SHA that is within the history of the master branch. Any commit that is not
+within the history of master will eventually get garbage-collected and your
+workflows will fail.
+
+[pin]: https://docs.github.com/en/actions/reference/security/secure-use#using-third-party-actions
 
 <br>
 

@@ -30,7 +30,11 @@ runs:
     - id: parse
       run: |
         : parse toolchain version
-        if [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
+        if [[ -z $toolchain ]]; then
+          # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070
+          echo "'toolchain' is a required input" >&2
+          exit 1
+        elif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
           if [[ ${{runner.os}} == macOS ]]; then
             echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT
           else
@@ -38,11 +42,13 @@ runs:
           fi
         elif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then
           echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT
+        elif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then
+          echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT
         else
           echo "toolchain=$toolchain" >> $GITHUB_OUTPUT
         fi
       env:
-        toolchain: 1.90.0
+        toolchain: 1.91.0
       shell: bash
 
     - id: flags
@@ -58,16 +64,26 @@ runs:
 
     - run: |
         : set $CARGO_HOME
-        echo CARGO_HOME=${CARGO_HOME:-${{runner.os == 'Windows' && '$USERPROFILE' || '$HOME'}}/.cargo} >> $GITHUB_ENV
+        echo CARGO_HOME=${CARGO_HOME:-"${{runner.os == 'Windows' && '$USERPROFILE\.cargo' || '$HOME/.cargo'}}"} >> $GITHUB_ENV
       shell: bash
 
     - run: |
         : install rustup if needed
         if ! command -v rustup &>/dev/null; then
-          curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
+          curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y
           echo "$CARGO_HOME/bin" >> $GITHUB_PATH
         fi
       if: runner.os != 'Windows'
+      shell: bash
+
+    - run: |
+        : install rustup if needed on windows
+        if ! command -v rustup &>/dev/null; then
+          curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://win.rustup.rs/${{runner.arch == 'ARM64' && 'aarch64' || 'x86_64'}} --output '${{runner.temp}}\rustup-init.exe'
+          '${{runner.temp}}\rustup-init.exe' --default-toolchain none --no-modify-path -y
+          echo "$CARGO_HOME\bin" >> $GITHUB_PATH
+        fi
+      if: runner.os == 'Windows'
       shell: bash
 
     - name: rustup toolchain install ${{steps.parse.outputs.toolchain}}
@@ -76,6 +92,7 @@ runs:
 
     - run: rustup default ${{steps.parse.outputs.toolchain}}
       shell: bash
+      continue-on-error: true  # https://github.com/dtolnay/rust-toolchain/issues/127
 
     - id: rustc-version
       run: |
