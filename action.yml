@@ -6,10 +6,6 @@ branding:
   color: purple
 
 inputs:
-  toolchain:
-    description: Rust toolchain specification -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
-    required: false
-    default: 1.80.0
   targets:
     description: Comma-separated list of target triples to install for this toolchain
     required: false
@@ -46,7 +42,7 @@ runs:
           echo "toolchain=$toolchain" >> $GITHUB_OUTPUT
         fi
       env:
-        toolchain: ${{inputs.toolchain}}
+        toolchain: 1.90.0
       shell: bash
 
     - id: flags
@@ -54,17 +50,22 @@ runs:
         : construct rustup command line
         echo "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT
         echo "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT
-        echo "downgrade=${{inputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}" >> $GITHUB_OUTPUT
+        echo "downgrade=${{steps.parse.outputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}" >> $GITHUB_OUTPUT
       env:
         targets: ${{inputs.targets || inputs.target || ''}}
         components: ${{inputs.components}}
       shell: bash
 
     - run: |
+        : set $CARGO_HOME
+        echo CARGO_HOME=${CARGO_HOME:-${{runner.os == 'Windows' && '$USERPROFILE' || '$HOME'}}/.cargo} >> $GITHUB_ENV
+      shell: bash
+
+    - run: |
         : install rustup if needed
         if ! command -v rustup &>/dev/null; then
           curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
-          echo "${CARGO_HOME:-$HOME/.cargo}/bin" >> $GITHUB_PATH
+          echo "$CARGO_HOME/bin" >> $GITHUB_PATH
         fi
       if: runner.os != 'Windows'
       shell: bash
