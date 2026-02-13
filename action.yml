@@ -8,7 +8,8 @@ branding:
 inputs:
   toolchain:
     description: Rust toolchain specification -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
-    required: true
+    required: false
+    default: beta
   targets:
     description: Comma-separated list of target triples to install for this toolchain
     required: false
