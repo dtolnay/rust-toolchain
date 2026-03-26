@@ -59,7 +59,7 @@ runs:
         : construct rustup command line
         echo "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT
         echo "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT
-        if [ "$TOOLCHAIN" = "nightly" ] && [ -n "$COMPONENTS" ]; then
+        if [ "$TOOLCHAIN" = "nightly" ] && [ -n "$components" ]; then
           echo "downgrade= --allow-downgrade" >> $GITHUB_OUTPUT
         else
           echo "downgrade=" >> $GITHUB_OUTPUT
@@ -68,7 +68,6 @@ runs:
         targets: ${{inputs.targets || inputs.target || ''}}
         components: ${{inputs.components}}
         TOOLCHAIN: ${{steps.parse.outputs.toolchain}}
-        COMPONENTS: ${{inputs.components}}
       shell: bash
 
     - run: |
