@@ -6,9 +6,6 @@ branding:
   color: purple
 
 inputs:
-  toolchain:
-    description: Rust toolchain specification -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification
-    required: true
   targets:
     description: Comma-separated list of target triples to install for this toolchain
     required: false
@@ -51,7 +48,7 @@ runs:
           echo "toolchain=$toolchain" >> $GITHUB_OUTPUT
         fi
       env:
-        toolchain: ${{inputs.toolchain}}
+        toolchain: 1.88.0
       shell: bash
 
     - id: flags
