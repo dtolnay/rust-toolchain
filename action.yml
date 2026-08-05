@@ -31,8 +31,8 @@ runs:
   using: composite
   steps:
     - id: parse
+      name: Parse toolchain version
       run: |
-        : parse toolchain version
         if [[ -z $toolchain ]]; then
           # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070
           echo "'toolchain' is a required input" >&2
@@ -55,8 +55,8 @@ runs:
       shell: bash
 
     - id: flags
+      name: Construct rustup command line
       run: |
-        : construct rustup command line
         echo "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT
         echo "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT
         echo "downgrade=${{steps.parse.outputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}" >> $GITHUB_OUTPUT
@@ -65,13 +65,12 @@ runs:
         components: ${{inputs.components}}
       shell: bash
 
-    - run: |
-        : set $CARGO_HOME
-        echo CARGO_HOME=${CARGO_HOME:-"${{runner.os == 'Windows' && '$USERPROFILE\.cargo' || '$HOME/.cargo'}}"} >> $GITHUB_ENV
+    - name: Set $CARGO_HOME
+      run: echo CARGO_HOME=${CARGO_HOME:-"${{runner.os == 'Windows' && '$USERPROFILE\.cargo' || '$HOME/.cargo'}}"} >> $GITHUB_ENV
       shell: bash
 
-    - run: |
-        : install rustup if needed
+    - name: Install rustup if needed
+      run: |
         if ! command -v rustup &>/dev/null; then
           curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y
           echo "$CARGO_HOME/bin" >> $GITHUB_PATH
@@ -79,8 +78,8 @@ runs:
       if: runner.os != 'Windows'
       shell: bash
 
-    - run: |
-        : install rustup if needed on windows
+    - name: Install rustup if needed on windows
+      run: |
         if ! command -v rustup &>/dev/null; then
           curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://win.rustup.rs/${{runner.arch == 'ARM64' && 'aarch64' || 'x86_64'}} --output '${{runner.temp}}\rustup-init.exe'
           '${{runner.temp}}\rustup-init.exe' --default-toolchain none --no-modify-path -y
@@ -95,34 +94,35 @@ runs:
         RUSTUP_PERMIT_COPY_RENAME: 1
       shell: bash
 
-    - run: rustup default ${{steps.parse.outputs.toolchain}}
+    - name: rustup default ${{steps.parse.outputs.toolchain}}
+      run: rustup default ${{steps.parse.outputs.toolchain}}
       shell: bash
       continue-on-error: true  # https://github.com/dtolnay/rust-toolchain/issues/127
 
     - id: rustc-version
+      name: Create cachekey
       run: |
-        : create cachekey
         DATE=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
         HASH=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-hash: //p')
         echo "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT
       shell: bash
 
-    - run: |
-        : disable incremental compilation
+    - name: Disable incremental compilation
+      run: |
         if [ -z "${CARGO_INCREMENTAL+set}" ]; then
           echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV
         fi
       shell: bash
 
-    - run: |
-        : enable colors in Cargo output
+    - name: Enable colors in Cargo output
+      run: |
         if [ -z "${CARGO_TERM_COLOR+set}" ]; then
           echo CARGO_TERM_COLOR=always >> $GITHUB_ENV
         fi
       shell: bash
 
-    - run: |
-        : enable Cargo sparse registry
+    - name: Enable Cargo sparse registry
+      run: |
         # implemented in 1.66, stabilized in 1.68, made default in 1.70
         if [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol ]; then
           if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: 1\.6[89]\.'; then
@@ -135,13 +135,14 @@ runs:
         fi
       shell: bash
 
-    - run: |
-        : work around spurious network errors in curl 8.0
+    - name: Work around spurious network errors in curl 8.0
+      run: |
         # https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation
         if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: 1\.7[01]\.'; then
           echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV
         fi
       shell: bash
 
-    - run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
+    - name: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
+      run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
       shell: bash
