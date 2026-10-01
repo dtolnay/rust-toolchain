@@ -89,7 +89,22 @@ runs:
       shell: bash
 
     - name: rustup toolchain install ${{steps.parse.outputs.toolchain}}
-      run: rustup toolchain install ${{steps.parse.outputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal${{steps.flags.outputs.downgrade}} --no-self-update --force-non-host
+      run: |
+        log=$(mktemp)
+        trap 'rm -f "$log"' EXIT
+        for attempt in 1 2 3 4 5; do
+          if rustup toolchain install ${{steps.parse.outputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal${{steps.flags.outputs.downgrade}} --no-self-update --force-non-host 2>&1 | tee "$log"; then
+            break
+          else
+            status=$?
+          fi
+          if [[ $attempt == 5 ]] || ! grep -Fq 'checksum failed for ' "$log" \
+              || ! grep -Fq 'this is likely due to an ongoing update of the official release server' "$log"; then
+            exit "$status"
+          fi
+          echo "Retrying rustup toolchain install in 30 seconds (retry $attempt of 4)" >&2
+          sleep 30
+        done
       env:
         RUSTUP_PERMIT_COPY_RENAME: 1
       shell: bash
