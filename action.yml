@@ -48,21 +48,12 @@ runs:
         elif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then
           echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT
         else
-          echo "toolchain=$toolchain" >> $GITHUB_OUTPUT
+          delimiter=EOF
+          while [[ $toolchain == *$delimiter* ]]; do delimiter+=_; done
+          printf 'toolchain<<%s\n%s\n%s\n' "$delimiter" "$toolchain" "$delimiter" >> $GITHUB_OUTPUT
         fi
       env:
         toolchain: ${{inputs.toolchain}}
-      shell: bash
-
-    - id: flags
-      name: Construct rustup command line
-      run: |
-        echo "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT
-        echo "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT
-        echo "downgrade=${{steps.parse.outputs.toolchain == 'nightly' && inputs.components && ' --allow-downgrade' || ''}}" >> $GITHUB_OUTPUT
-      env:
-        targets: ${{inputs.targets || inputs.target || ''}}
-        components: ${{inputs.components}}
       shell: bash
 
     - name: Set $CARGO_HOME
@@ -90,10 +81,16 @@ runs:
 
     - name: rustup toolchain install ${{steps.parse.outputs.toolchain}}
       run: |
+        set -f  # split targets and components on commas and whitespace, without glob expansion
+        flags=()
+        for t in ${targets//,/ }; do flags+=(--target "$t"); done
+        for c in ${components//,/ }; do flags+=(--component "$c"); done
+        downgrade=()
+        if [[ $toolchain == nightly && -n $components ]]; then downgrade=(--allow-downgrade); fi
         log=$(mktemp)
         trap 'rm -f "$log"' EXIT
         for attempt in 1 2 3 4 5; do
-          if rustup toolchain install ${{steps.parse.outputs.toolchain}}${{steps.flags.outputs.targets}}${{steps.flags.outputs.components}} --profile minimal${{steps.flags.outputs.downgrade}} --no-self-update --force-non-host 2>&1 | tee "$log"; then
+          if rustup toolchain install "$toolchain" "${flags[@]}" --profile minimal "${downgrade[@]}" --no-self-update --force-non-host 2>&1 | tee "$log"; then
             break
           else
             status=$?
@@ -106,20 +103,27 @@ runs:
           sleep 30
         done
       env:
+        toolchain: ${{steps.parse.outputs.toolchain}}
+        targets: ${{inputs.targets || inputs.target || ''}}
+        components: ${{inputs.components}}
         RUSTUP_PERMIT_COPY_RENAME: 1
       shell: bash
 
     - name: rustup default ${{steps.parse.outputs.toolchain}}
-      run: rustup default ${{steps.parse.outputs.toolchain}} --force-non-host
+      run: rustup default "$toolchain" --force-non-host
+      env:
+        toolchain: ${{steps.parse.outputs.toolchain}}
       shell: bash
       continue-on-error: true  # https://github.com/dtolnay/rust-toolchain/issues/127
 
     - id: rustc-version
       name: Create cachekey
       run: |
-        DATE=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
-        HASH=$(rustc +${{steps.parse.outputs.toolchain}} --version --verbose | sed -ne 's/^commit-hash: //p')
+        DATE=$(rustc +"$toolchain" --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
+        HASH=$(rustc +"$toolchain" --version --verbose | sed -ne 's/^commit-hash: //p')
         echo "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT
+      env:
+        toolchain: ${{steps.parse.outputs.toolchain}}
       shell: bash
 
     - name: Disable incremental compilation
@@ -140,24 +144,30 @@ runs:
       run: |
         # implemented in 1.66, stabilized in 1.68, made default in 1.70
         if [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol ]; then
-          if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: 1\.6[89]\.'; then
+          if rustc +"$toolchain" --version --verbose | grep -q '^release: 1\.6[89]\.'; then
             touch "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol || true
             echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV
-          elif rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: 1\.6[67]\.'; then
+          elif rustc +"$toolchain" --version --verbose | grep -q '^release: 1\.6[67]\.'; then
             touch "${{runner.temp}}"/.implicit_cargo_registries_crates_io_protocol || true
             echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV
           fi
         fi
+      env:
+        toolchain: ${{steps.parse.outputs.toolchain}}
       shell: bash
 
     - name: Work around spurious network errors in curl 8.0
       run: |
         # https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation
-        if rustc +${{steps.parse.outputs.toolchain}} --version --verbose | grep -q '^release: 1\.7[01]\.'; then
+        if rustc +"$toolchain" --version --verbose | grep -q '^release: 1\.7[01]\.'; then
           echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV
         fi
+      env:
+        toolchain: ${{steps.parse.outputs.toolchain}}
       shell: bash
 
     - name: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
-      run: rustc +${{steps.parse.outputs.toolchain}} --version --verbose
+      run: rustc +"$toolchain" --version --verbose
+      env:
+        toolchain: ${{steps.parse.outputs.toolchain}}
       shell: bash
