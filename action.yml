@@ -85,12 +85,11 @@ runs:
         flags=()
         for t in ${targets//,/ }; do flags+=(--target "$t"); done
         for c in ${components//,/ }; do flags+=(--component "$c"); done
-        downgrade=()
-        if [[ $toolchain == nightly && -n $components ]]; then downgrade=(--allow-downgrade); fi
+        if [[ $toolchain == nightly && -n $components ]]; then flags+=(--allow-downgrade); fi
         log=$(mktemp)
         trap 'rm -f "$log"' EXIT
         for attempt in 1 2 3 4 5; do
-          if rustup toolchain install "$toolchain" "${flags[@]}" --profile minimal "${downgrade[@]}" --no-self-update --force-non-host 2>&1 | tee "$log"; then
+          if rustup toolchain install "$toolchain" "${flags[@]}" --profile minimal --no-self-update --force-non-host 2>&1 | tee "$log"; then
             break
           else
             status=$?
