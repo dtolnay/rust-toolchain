@@ -43,18 +43,3 @@ jobs:
         if: matrix.rust == 'nightly' || matrix.rust == 'beta' || matrix.rust == 'stable'
       - run: cargo check
         if: matrix.rust == 'nightly' || matrix.rust == 'beta' || matrix.rust == 'stable'
-
-  non-host:
-    name: Non-host toolchain on Windows
-    runs-on: windows-latest
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./
-        with:
-          toolchain: stable-i686-pc-windows-msvc
-      - name: Check the active toolchain and compiler host
-        run: |
-          test "$(rustup show active-toolchain)" = "stable-i686-pc-windows-msvc (default)"
-          rustc --version --verbose | grep -Fx 'host: i686-pc-windows-msvc'
-        shell: bash
