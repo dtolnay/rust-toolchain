@@ -14,19 +14,19 @@ patch_releases=(
     1.84.1 1.85.1 1.91.1 1.93.1 1.94.1 1.96.1 1.97.1 1.98.1 1.99.1
 )
 
-releases() {
-    printf "%s\n" 1.{0..120}.0 ${patch_releases[@]} | sort -V
-}
+# Resolve the published versions before changing any branches. Do not advertise
+# future toolchains: dependency updaters treat version branches as releases.
+releases=$(bash scripts/released-versions.sh "${patch_releases[@]}") || exit 1
 
 base=$(git rev-parse HEAD)
 push=()
 
 declare -A minor
-for rev in `releases`; do
+for rev in $releases; do
     minor[${rev%.*}]=$rev
 done
 
-for rev in `releases` stable beta nightly; do
+for rev in $releases stable beta nightly; do
     echo "Updating $rev branch"
     git checkout --quiet "$base"
     git branch --quiet --delete --force $rev &>/dev/null || true

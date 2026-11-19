@@ -111,6 +111,24 @@ workflows will fail.
 
 <br>
 
+## Maintaining version branches
+
+`scripts/update-revs.sh` reads Rust's published stable channel manifest before
+generating version branches. Minor versions and the historical patch release
+list are capped at that stable version; the current stable patch is included
+automatically. A failed download or invalid stable version stops the script
+before it changes any branches.
+
+Repositories that previously published future version branches must also remove
+those remote branches (both `1.N` and `1.N.P` forms) after reviewing them against
+the stable manifest. Regenerating branches does not delete existing remote refs.
+Until those refs are removed, Dependabot can continue proposing unreleased Rust
+versions. This cleanup must happen in the repository consumers reference, such
+as `dtolnay/rust-toolchain`; changing a fork alone does not fix its consumers.
+
+Run the release selection regression tests with
+`python3 scripts/test-released-versions.py`.
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT

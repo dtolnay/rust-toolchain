@@ -11,6 +11,12 @@ permissions:
   contents: read
 
 jobs:
+  released-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 scripts/test-released-versions.py
+
   install:
     name: Rust ${{matrix.rust}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}
